@@ -1,0 +1,42 @@
+{{define "title"}}{{.Name}}{{end}}
+{{define "content"}}
+<p class="breadcrumb"><a href="/contractors">Contractors</a> / {{.Name}}</p>
+<h1>{{.Name}}</h1>
+<div class="stat-row">
+  <div class="stat-tile"><span class="stat-value">{{.Count | commas}}</span><span class="stat-label">awards won</span></div>
+  <div class="stat-tile"><span class="stat-value">€{{.Total | euro}}</span><span class="stat-label">total value</span></div>
+</div>
+
+<section>
+  <h2>Authorities worked with</h2>
+  <table class="data-table">
+    <thead><tr><th>Authority</th><th class="num">Awards</th><th class="num">Value</th></tr></thead>
+    <tbody>
+    {{range .Authorities}}
+      <tr>
+        <td><a href="/authority/{{.Slug}}">{{.Name}}</a></td>
+        <td class="num">{{.Count | commas}}</td>
+        <td class="num">€{{.Total | euro}}</td>
+      </tr>
+    {{end}}
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Recent awards</h2>
+  <table class="data-table">
+    <thead><tr><th>Date</th><th>Tender</th><th>Authority</th><th class="num">Value</th></tr></thead>
+    <tbody>
+    {{range .RecentAwards}}
+      <tr>
+        <td class="nowrap">{{if .AwardDate}}{{.AwardDate}}{{else}}—{{end}}</td>
+        <td>{{.TenderTitle}}</td>
+        <td><a href="/authority/{{.AuthoritySlug}}">{{.AuthorityName}}</a></td>
+        <td class="num">{{if .Value}}€{{.Value | euro}}{{else}}—{{end}}</td>
+      </tr>
+    {{end}}
+    </tbody>
+  </table>
+</section>
+{{end}}

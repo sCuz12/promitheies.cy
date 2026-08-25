@@ -69,3 +69,20 @@ func DivisionCode(fullCode string) string {
 	}
 	return fullCode[:2]
 }
+
+var nameByCode = func() map[string]string {
+	m := make(map[string]string, len(Divisions))
+	for _, d := range Divisions {
+		m[d.Code] = d.DescriptionEN
+	}
+	return m
+}()
+
+// Name returns the English description for a division code (e.g.
+// "45000000" -> "Construction work"), or the code itself if unrecognized.
+func Name(code string) string {
+	if name, ok := nameByCode[code]; ok {
+		return name
+	}
+	return code
+}

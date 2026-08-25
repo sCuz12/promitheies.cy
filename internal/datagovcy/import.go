@@ -14,6 +14,18 @@ import (
 // and the *_aliases.source columns for provenance.
 const Source = "datagovcy"
 
+// placeholderContractorNames are EONAME values observed in the source data
+// that are generic procurement-process labels or test records rather than
+// an actual winning company (e.g. "ΟΙΚΟΝΟΜΙΚΟΣ ΦΟΡΕΑΣ" = "Economic Operator",
+// a placeholder that alone would otherwise rank as the #1 contractor by
+// value). Treated the same as a blank contractor name: the tender is still
+// imported, just without an award row.
+var placeholderContractorNames = map[string]bool{
+	"ΟΙΚΟΝΟΜΙΚΟΣ ΦΟΡΕΑΣ": true,
+	"Αγορές μέσω Πρεσβείας της Κυπριακής Δημοκρατίας": true,
+	"Γενικό Λογιστήριο της Δημοκρατίας (Παρατηρητής/Test)": true,
+}
+
 // Stats summarizes one import run for logging into ingest_runs.
 type Stats struct {
 	Processed int
@@ -43,7 +55,7 @@ func Import(ctx context.Context, pool *pgxpool.Pool, awards []Award) (Stats, err
 		}
 
 		var contractorID *int64
-		if a.ContractorName != "" {
+		if a.ContractorName != "" && !placeholderContractorNames[a.ContractorName] {
 			cid, err := entities.ResolveContractor(ctx, pool, a.ContractorName, Source)
 			if err != nil {
 				return stats, fmt.Errorf("resolve contractor for CFTID %s: %w", a.CFTID, err)

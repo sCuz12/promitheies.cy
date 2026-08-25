@@ -1,0 +1,18 @@
+{{define "title"}}Authorities{{end}}
+{{define "content"}}
+<h1>Authorities</h1>
+<p class="muted">{{len .}} authorities with awarded contracts, ranked by total value.</p>
+<table class="data-table">
+  <thead><tr><th>#</th><th>Authority</th><th class="num">Awards</th><th class="num">Total value</th></tr></thead>
+  <tbody>
+  {{range $i, $a := .}}
+    <tr>
+      <td class="nowrap">{{inc $i}}</td>
+      <td><a href="/authority/{{$a.Slug}}">{{$a.Name}}</a></td>
+      <td class="num">{{$a.Count | commas}}</td>
+      <td class="num">€{{$a.Total | euro}}</td>
+    </tr>
+  {{end}}
+  </tbody>
+</table>
+{{end}}

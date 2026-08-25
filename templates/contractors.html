@@ -1,0 +1,18 @@
+{{define "title"}}Contractors{{end}}
+{{define "content"}}
+<h1>Contractors</h1>
+<p class="muted">Top {{len .}} contractors by total awarded value.</p>
+<table class="data-table">
+  <thead><tr><th>#</th><th>Contractor</th><th class="num">Awards</th><th class="num">Total value</th></tr></thead>
+  <tbody>
+  {{range $i, $c := .}}
+    <tr>
+      <td class="nowrap">{{inc $i}}</td>
+      <td><a href="/contractor/{{$c.Slug}}">{{$c.Name}}</a></td>
+      <td class="num">{{$c.Count | commas}}</td>
+      <td class="num">€{{$c.Total | euro}}</td>
+    </tr>
+  {{end}}
+  </tbody>
+</table>
+{{end}}
