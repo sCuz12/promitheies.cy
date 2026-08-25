@@ -2,12 +2,13 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 CREATE TABLE authorities (
     id              BIGSERIAL PRIMARY KEY,
-    canonical_name_en TEXT NOT NULL,
+    canonical_name_en TEXT,
     canonical_name_el TEXT,
     type            TEXT NOT NULL DEFAULT '',
     region          TEXT NOT NULL DEFAULT '',
     slug            TEXT NOT NULL UNIQUE,
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+    CHECK (canonical_name_en IS NOT NULL OR canonical_name_el IS NOT NULL)
 );
 
 CREATE TABLE authority_aliases (
@@ -54,7 +55,8 @@ CREATE TABLE tenders (
     title_en        TEXT,
     title_el        TEXT,
     authority_id    BIGINT REFERENCES authorities(id),
-    cpv_code        TEXT REFERENCES cpv_categories(code),
+    cpv_code        TEXT,
+    cpv_division    TEXT, -- not FK'd: source CPV codes occasionally fall outside the seeded division list
     estimated_value NUMERIC(14,2),
     currency        TEXT NOT NULL DEFAULT 'EUR',
     deadline        DATE,
@@ -68,9 +70,14 @@ CREATE TABLE tenders (
 );
 CREATE INDEX idx_tenders_authority_id ON tenders(authority_id);
 CREATE INDEX idx_tenders_cpv_code ON tenders(cpv_code);
+CREATE INDEX idx_tenders_cpv_division ON tenders(cpv_division);
 CREATE INDEX idx_tenders_status ON tenders(status);
 CREATE INDEX idx_tenders_published_at ON tenders(published_at);
 CREATE INDEX idx_tenders_external_ids ON tenders USING gin (external_ids);
+-- Supports idempotent per-source upserts keyed on a source-specific external
+-- id (e.g. data.gov.cy's CFTID) stored in external_ids.
+CREATE UNIQUE INDEX idx_tenders_source_cftid ON tenders (source, (external_ids->>'cftid'))
+    WHERE external_ids ? 'cftid';
 CREATE INDEX idx_tenders_title_fts ON tenders USING gin (
     to_tsvector('simple', coalesce(title_en, '') || ' ' || coalesce(title_el, ''))
 );
@@ -82,7 +89,8 @@ CREATE TABLE awards (
     value           NUMERIC(14,2),
     award_date      DATE,
     source          TEXT NOT NULL,
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE (tender_id, source)
 );
 CREATE INDEX idx_awards_tender_id ON awards(tender_id);
 CREATE INDEX idx_awards_contractor_id ON awards(contractor_id);
