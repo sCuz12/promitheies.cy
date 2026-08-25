@@ -1,0 +1,273 @@
+{
+    "notices": [
+        {
+            "notice-type": "cn-standard",
+            "procedure-type": "open",
+            "publication-number": "292871-2016",
+            "classification-cpv": [
+                "33140000"
+            ],
+            "total-value-cur": [
+                "EUR"
+            ],
+            "publication-date": "2016-08-24+02:00",
+            "buyer-name": {
+                "ell": [
+                    "\u03a5\u03c0\u03bf\u03c5\u03c1\u03b3\u03b5\u03af\u03bf \u03a5\u03b3\u03b5\u03af\u03b1\u03c2"
+                ]
+            },
+            "links": {
+                "xml": {
+                    "MUL": "https://ted.europa.eu/en/notice/292871-2016/xml"
+                },
+                "pdf": {
+                    "BUL": "https://ted.europa.eu/bg/notice/292871-2016/pdf",
+                    "SPA": "https://ted.europa.eu/es/notice/292871-2016/pdf",
+                    "CES": "https://ted.europa.eu/cs/notice/292871-2016/pdf",
+                    "DAN": "https://ted.europa.eu/da/notice/292871-2016/pdf",
+                    "DEU": "https://ted.europa.eu/de/notice/292871-2016/pdf",
+                    "EST": "https://ted.europa.eu/et/notice/292871-2016/pdf",
+                    "ELL": "https://ted.europa.eu/el/notice/292871-2016/pdf",
+                    "ENG": "https://ted.europa.eu/en/notice/292871-2016/pdf",
+                    "FRA": "https://ted.europa.eu/fr/notice/292871-2016/pdf",
+                    "GLE": "https://ted.europa.eu/ga/notice/292871-2016/pdf",
+                    "HRV": "https://ted.europa.eu/hr/notice/292871-2016/pdf",
+                    "ITA": "https://ted.europa.eu/it/notice/292871-2016/pdf",
+                    "LAV": "https://ted.europa.eu/lv/notice/292871-2016/pdf",
+                    "LIT": "https://ted.europa.eu/lt/notice/292871-2016/pdf",
+                    "HUN": "https://ted.europa.eu/hu/notice/292871-2016/pdf",
+                    "MLT": "https://ted.europa.eu/mt/notice/292871-2016/pdf",
+                    "NLD": "https://ted.europa.eu/nl/notice/292871-2016/pdf",
+                    "POL": "https://ted.europa.eu/pl/notice/292871-2016/pdf",
+                    "POR": "https://ted.europa.eu/pt/notice/292871-2016/pdf",
+                    "RON": "https://ted.europa.eu/ro/notice/292871-2016/pdf",
+                    "SLK": "https://ted.europa.eu/sk/notice/292871-2016/pdf",
+                    "SLV": "https://ted.europa.eu/sl/notice/292871-2016/pdf",
+                    "FIN": "https://ted.europa.eu/fi/notice/292871-2016/pdf",
+                    "SWE": "https://ted.europa.eu/sv/notice/292871-2016/pdf"
+                },
+                "pdfs": {
+                    "ELL": "https://ted.europa.eu/el/notice/292871-2016/pdfs"
+                },
+                "html": {
+                    "BUL": "https://ted.europa.eu/bg/notice/-/detail/292871-2016",
+                    "SPA": "https://ted.europa.eu/es/notice/-/detail/292871-2016",
+                    "CES": "https://ted.europa.eu/cs/notice/-/detail/292871-2016",
+                    "DAN": "https://ted.europa.eu/da/notice/-/detail/292871-2016",
+                    "DEU": "https://ted.europa.eu/de/notice/-/detail/292871-2016",
+                    "EST": "https://ted.europa.eu/et/notice/-/detail/292871-2016",
+                    "ELL": "https://ted.europa.eu/el/notice/-/detail/292871-2016",
+                    "ENG": "https://ted.europa.eu/en/notice/-/detail/292871-2016",
+                    "FRA": "https://ted.europa.eu/fr/notice/-/detail/292871-2016",
+                    "GLE": "https://ted.europa.eu/ga/notice/-/detail/292871-2016",
+                    "HRV": "https://ted.europa.eu/hr/notice/-/detail/292871-2016",
+                    "ITA": "https://ted.europa.eu/it/notice/-/detail/292871-2016",
+                    "LAV": "https://ted.europa.eu/lv/notice/-/detail/292871-2016",
+                    "LIT": "https://ted.europa.eu/lt/notice/-/detail/292871-2016",
+                    "HUN": "https://ted.europa.eu/hu/notice/-/detail/292871-2016",
+                    "MLT": "https://ted.europa.eu/mt/notice/-/detail/292871-2016",
+                    "NLD": "https://ted.europa.eu/nl/notice/-/detail/292871-2016",
+                    "POL": "https://ted.europa.eu/pl/notice/-/detail/292871-2016",
+                    "POR": "https://ted.europa.eu/pt/notice/-/detail/292871-2016",
+                    "RON": "https://ted.europa.eu/ro/notice/-/detail/292871-2016",
+                    "SLK": "https://ted.europa.eu/sk/notice/-/detail/292871-2016",
+                    "SLV": "https://ted.europa.eu/sl/notice/-/detail/292871-2016",
+                    "FIN": "https://ted.europa.eu/fi/notice/-/detail/292871-2016",
+                    "SWE": "https://ted.europa.eu/sv/notice/-/detail/292871-2016"
+                },
+                "htmlDirect": {
+                    "BUL": "https://ted.europa.eu/bg/notice/292871-2016/html",
+                    "SPA": "https://ted.europa.eu/es/notice/292871-2016/html",
+                    "CES": "https://ted.europa.eu/cs/notice/292871-2016/html",
+                    "DAN": "https://ted.europa.eu/da/notice/292871-2016/html",
+                    "DEU": "https://ted.europa.eu/de/notice/292871-2016/html",
+                    "EST": "https://ted.europa.eu/et/notice/292871-2016/html",
+                    "ELL": "https://ted.europa.eu/el/notice/292871-2016/html",
+                    "ENG": "https://ted.europa.eu/en/notice/292871-2016/html",
+                    "FRA": "https://ted.europa.eu/fr/notice/292871-2016/html",
+                    "GLE": "https://ted.europa.eu/ga/notice/292871-2016/html",
+                    "HRV": "https://ted.europa.eu/hr/notice/292871-2016/html",
+                    "ITA": "https://ted.europa.eu/it/notice/292871-2016/html",
+                    "LAV": "https://ted.europa.eu/lv/notice/292871-2016/html",
+                    "LIT": "https://ted.europa.eu/lt/notice/292871-2016/html",
+                    "HUN": "https://ted.europa.eu/hu/notice/292871-2016/html",
+                    "MLT": "https://ted.europa.eu/mt/notice/292871-2016/html",
+                    "NLD": "https://ted.europa.eu/nl/notice/292871-2016/html",
+                    "POL": "https://ted.europa.eu/pl/notice/292871-2016/html",
+                    "POR": "https://ted.europa.eu/pt/notice/292871-2016/html",
+                    "RON": "https://ted.europa.eu/ro/notice/292871-2016/html",
+                    "SLK": "https://ted.europa.eu/sk/notice/292871-2016/html",
+                    "SLV": "https://ted.europa.eu/sl/notice/292871-2016/html",
+                    "FIN": "https://ted.europa.eu/fi/notice/292871-2016/html",
+                    "SWE": "https://ted.europa.eu/sv/notice/292871-2016/html"
+                }
+            },
+            "buyer-country": [
+                "CYP"
+            ],
+            "notice-title": {
+                "hun": "Ciprus-Nicosia: Orvosi fogy\u00f3eszk\u00f6z\u00f6k",
+                "swe": "Cypern-Nicosia: Medicinska f\u00f6rbrukningsartiklar",
+                "lav": "Kipra-Nikosija: Medic\u012bnas pal\u012bgmateri\u0101li",
+                "gle": "Chipir, an-Nicosia: Medical consumables",
+                "ell": "\u039a\u03cd\u03c0\u03c1\u03bf\u03c2-\u039b\u03b5\u03c5\u03ba\u03c9\u03c3\u03af\u03b1: \u0399\u03b1\u03c4\u03c1\u03b9\u03ba\u03ac \u03b1\u03bd\u03b1\u03bb\u03ce\u03c3\u03b9\u03bc\u03b1",
+                "spa": "Chipre-Nicosia: Material m\u00e9dico fungible",
+                "nld": "Cyprus-Nicosia: Medische verbruiksartikelen",
+                "est": "K\u00fcpros-Nikosia: Meditsiinilised tarbekaubad",
+                "fin": "Kypros-Nikosia: L\u00e4\u00e4ketieteelliset kertak\u00e4ytt\u00f6tarvikkeet",
+                "pol": "Cypr-Nikozja: Materia\u0142y medyczne",
+                "hrv": "Cipar-Nikozija: Medicinski potro\u0161ni materijal",
+                "dan": "Cypern-Nicosia: Medicinske forbrugsmaterialer",
+                "ces": "Kypr-Nik\u00f3sie: Zdravotnick\u00fd spot\u0159ebn\u00ed materi\u00e1l",
+                "ron": "Cipru-Nicosia: Consumabile medicale",
+                "por": "Chipre-Nic\u00f3sia: Material m\u00e9dico de consumo",
+                "slk": "Cyprus-Nik\u00f3zia: Zdravotn\u00edcky spotrebn\u00fd materi\u00e1l",
+                "fra": "Chypre-Nicosie: Consommables m\u00e9dicaux",
+                "mlt": "\u010aipru-Nikosija: O\u0121\u0121etti ta' konsum medi\u010bi",
+                "deu": "Zypern-Nikosia: Medizinische Verbrauchsartikel",
+                "lit": "Kipras-Nikosija: Medicinos reikmenys",
+                "ita": "Cipro-Nicosia: Materiali medici",
+                "bul": "\u041a\u0438\u043f\u044ap-\u041d\u0438\u043a\u043e\u0437\u0438\u044f: \u041c\u0435\u0434\u0438\u0446\u0438\u043d\u0441\u043a\u0438 \u043a\u043e\u043d\u0441\u0443\u043c\u0430\u0442\u0438\u0432\u0438",
+                "slv": "Ciper-Nikozija: Proizvodi za medicinsko uporabo",
+                "eng": "Cyprus-Nicosia: Medical consumables"
+            },
+            "form-type": "competition"
+        },
+        {
+            "notice-type": "cn-standard",
+            "procedure-type": "open",
+            "publication-number": "292908-2016",
+            "classification-cpv": [
+                "33651000"
+            ],
+            "total-value-cur": [
+                "EUR"
+            ],
+            "publication-date": "2016-08-24+02:00",
+            "buyer-name": {
+                "ell": [
+                    "\u03a6\u03b1\u03c1\u03bc\u03b1\u03ba\u03b5\u03c5\u03c4\u03b9\u03ba\u03ad\u03c2 \u03a5\u03c0\u03b7\u03c1\u03b5\u03c3\u03af\u03b5\u03c2"
+                ]
+            },
+            "links": {
+                "xml": {
+                    "MUL": "https://ted.europa.eu/en/notice/292908-2016/xml"
+                },
+                "pdf": {
+                    "BUL": "https://ted.europa.eu/bg/notice/292908-2016/pdf",
+                    "SPA": "https://ted.europa.eu/es/notice/292908-2016/pdf",
+                    "CES": "https://ted.europa.eu/cs/notice/292908-2016/pdf",
+                    "DAN": "https://ted.europa.eu/da/notice/292908-2016/pdf",
+                    "DEU": "https://ted.europa.eu/de/notice/292908-2016/pdf",
+                    "EST": "https://ted.europa.eu/et/notice/292908-2016/pdf",
+                    "ELL": "https://ted.europa.eu/el/notice/292908-2016/pdf",
+                    "ENG": "https://ted.europa.eu/en/notice/292908-2016/pdf",
+                    "FRA": "https://ted.europa.eu/fr/notice/292908-2016/pdf",
+                    "GLE": "https://ted.europa.eu/ga/notice/292908-2016/pdf",
+                    "HRV": "https://ted.europa.eu/hr/notice/292908-2016/pdf",
+                    "ITA": "https://ted.europa.eu/it/notice/292908-2016/pdf",
+                    "LAV": "https://ted.europa.eu/lv/notice/292908-2016/pdf",
+                    "LIT": "https://ted.europa.eu/lt/notice/292908-2016/pdf",
+                    "HUN": "https://ted.europa.eu/hu/notice/292908-2016/pdf",
+                    "MLT": "https://ted.europa.eu/mt/notice/292908-2016/pdf",
+                    "NLD": "https://ted.europa.eu/nl/notice/292908-2016/pdf",
+                    "POL": "https://ted.europa.eu/pl/notice/292908-2016/pdf",
+                    "POR": "https://ted.europa.eu/pt/notice/292908-2016/pdf",
+                    "RON": "https://ted.europa.eu/ro/notice/292908-2016/pdf",
+                    "SLK": "https://ted.europa.eu/sk/notice/292908-2016/pdf",
+                    "SLV": "https://ted.europa.eu/sl/notice/292908-2016/pdf",
+                    "FIN": "https://ted.europa.eu/fi/notice/292908-2016/pdf",
+                    "SWE": "https://ted.europa.eu/sv/notice/292908-2016/pdf"
+                },
+                "pdfs": {
+                    "ELL": "https://ted.europa.eu/el/notice/292908-2016/pdfs"
+                },
+                "html": {
+                    "BUL": "https://ted.europa.eu/bg/notice/-/detail/292908-2016",
+                    "SPA": "https://ted.europa.eu/es/notice/-/detail/292908-2016",
+                    "CES": "https://ted.europa.eu/cs/notice/-/detail/292908-2016",
+                    "DAN": "https://ted.europa.eu/da/notice/-/detail/292908-2016",
+                    "DEU": "https://ted.europa.eu/de/notice/-/detail/292908-2016",
+                    "EST": "https://ted.europa.eu/et/notice/-/detail/292908-2016",
+                    "ELL": "https://ted.europa.eu/el/notice/-/detail/292908-2016",
+                    "ENG": "https://ted.europa.eu/en/notice/-/detail/292908-2016",
+                    "FRA": "https://ted.europa.eu/fr/notice/-/detail/292908-2016",
+                    "GLE": "https://ted.europa.eu/ga/notice/-/detail/292908-2016",
+                    "HRV": "https://ted.europa.eu/hr/notice/-/detail/292908-2016",
+                    "ITA": "https://ted.europa.eu/it/notice/-/detail/292908-2016",
+                    "LAV": "https://ted.europa.eu/lv/notice/-/detail/292908-2016",
+                    "LIT": "https://ted.europa.eu/lt/notice/-/detail/292908-2016",
+                    "HUN": "https://ted.europa.eu/hu/notice/-/detail/292908-2016",
+                    "MLT": "https://ted.europa.eu/mt/notice/-/detail/292908-2016",
+                    "NLD": "https://ted.europa.eu/nl/notice/-/detail/292908-2016",
+                    "POL": "https://ted.europa.eu/pl/notice/-/detail/292908-2016",
+                    "POR": "https://ted.europa.eu/pt/notice/-/detail/292908-2016",
+                    "RON": "https://ted.europa.eu/ro/notice/-/detail/292908-2016",
+                    "SLK": "https://ted.europa.eu/sk/notice/-/detail/292908-2016",
+                    "SLV": "https://ted.europa.eu/sl/notice/-/detail/292908-2016",
+                    "FIN": "https://ted.europa.eu/fi/notice/-/detail/292908-2016",
+                    "SWE": "https://ted.europa.eu/sv/notice/-/detail/292908-2016"
+                },
+                "htmlDirect": {
+                    "BUL": "https://ted.europa.eu/bg/notice/292908-2016/html",
+                    "SPA": "https://ted.europa.eu/es/notice/292908-2016/html",
+                    "CES": "https://ted.europa.eu/cs/notice/292908-2016/html",
+                    "DAN": "https://ted.europa.eu/da/notice/292908-2016/html",
+                    "DEU": "https://ted.europa.eu/de/notice/292908-2016/html",
+                    "EST": "https://ted.europa.eu/et/notice/292908-2016/html",
+                    "ELL": "https://ted.europa.eu/el/notice/292908-2016/html",
+                    "ENG": "https://ted.europa.eu/en/notice/292908-2016/html",
+                    "FRA": "https://ted.europa.eu/fr/notice/292908-2016/html",
+                    "GLE": "https://ted.europa.eu/ga/notice/292908-2016/html",
+                    "HRV": "https://ted.europa.eu/hr/notice/292908-2016/html",
+                    "ITA": "https://ted.europa.eu/it/notice/292908-2016/html",
+                    "LAV": "https://ted.europa.eu/lv/notice/292908-2016/html",
+                    "LIT": "https://ted.europa.eu/lt/notice/292908-2016/html",
+                    "HUN": "https://ted.europa.eu/hu/notice/292908-2016/html",
+                    "MLT": "https://ted.europa.eu/mt/notice/292908-2016/html",
+                    "NLD": "https://ted.europa.eu/nl/notice/292908-2016/html",
+                    "POL": "https://ted.europa.eu/pl/notice/292908-2016/html",
+                    "POR": "https://ted.europa.eu/pt/notice/292908-2016/html",
+                    "RON": "https://ted.europa.eu/ro/notice/292908-2016/html",
+                    "SLK": "https://ted.europa.eu/sk/notice/292908-2016/html",
+                    "SLV": "https://ted.europa.eu/sl/notice/292908-2016/html",
+                    "FIN": "https://ted.europa.eu/fi/notice/292908-2016/html",
+                    "SWE": "https://ted.europa.eu/sv/notice/292908-2016/html"
+                }
+            },
+            "buyer-country": [
+                "CYP"
+            ],
+            "notice-title": {
+                "hun": "Ciprus-Nicosia: \u00c1ltal\u00e1nos fert\u0151z\u00e9sellenes szerek sziszt\u00e9m\u00e1s haszn\u00e1latra \u00e9s vakcin\u00e1k",
+                "lav": "Kipra-Nikosija: Visp\u0101r\u0113ji pretinfekcijas l\u012bdzek\u013ci sist\u0113miskai lieto\u0161anai un vakc\u012bnas",
+                "swe": "Cypern-Nicosia: Antiinfektiva medel f\u00f6r systemiskt bruk",
+                "gle": "Chipir, an-Nicosia: General anti-infectives for systemic use and vaccines",
+                "ell": "\u039a\u03cd\u03c0\u03c1\u03bf\u03c2-\u039b\u03b5\u03c5\u03ba\u03c9\u03c3\u03af\u03b1: \u03a6\u03ac\u03c1\u03bc\u03b1\u03ba\u03b1 \u03ba\u03b1\u03c4\u03ac \u03c4\u03c9\u03bd \u03bb\u03bf\u03b9\u03be\u03ce\u03be\u03b5\u03c9\u03bd \u03c3\u03c5\u03c3\u03c4\u03b7\u03bc\u03b1\u03c4\u03b9\u03ba\u03ae\u03c2 \u03c7\u03c1\u03ae\u03c3\u03b7\u03c2",
+                "spa": "Chipre-Nicosia: Antiinfecciosos generales para uso sist\u00e9mico, vacunas",
+                "est": "K\u00fcpros-Nikosia: \u00dcldised infektsioonivastased ained s\u00fcsteemseks kasutamiseks ja vaktsiinid",
+                "nld": "Cyprus-Nicosia: Algemene infectiewerende middelen voor systemisch gebruik",
+                "fin": "Kypros-Nikosia: Systeemisesti vaikuttavat infektiol\u00e4\u00e4kkeet",
+                "pol": "Cypr-Nikozja: Og\u00f3lne \u015brodki przeciwinfekcyjne do u\u017cytku og\u00f3lnoustrojowego oraz szczepionki",
+                "hrv": "Cipar-Nikozija: Op\u0107a protuupalna sredstva za sustavno lije\u010denje i cjepiva",
+                "dan": "Cypern-Nicosia: Antiinfektiva til systemisk brug",
+                "ces": "Kypr-Nik\u00f3sie: Antiinfektiva pro syst\u00e9mov\u00e9 u\u017eit\u00ed a o\u010dkovac\u00ed l\u00e1tky",
+                "ron": "Cipru-Nicosia: Antiinfec\u0163ioase generale pentru uz sistemic",
+                "por": "Chipre-Nic\u00f3sia: Anti-infecciosos gerais de uso sist\u00e9mico",
+                "slk": "Cyprus-Nik\u00f3zia: V\u0161eobecn\u00e9 antiinfek\u010dn\u00e9 l\u00e1tky na syst\u00e9mov\u00e9 pou\u017eitie a o\u010dkovacie l\u00e1tky",
+                "fra": "Chypre-Nicosie: Anti-infectieux g\u00e9n\u00e9raux \u00e0 usage syst\u00e9mique",
+                "mlt": "\u010aipru-Nikosija: Anti-infettivi \u0121enerali g\u0127all-u\u017cu sistematiku, u va\u010b\u010bini",
+                "deu": "Zypern-Nikosia: Antiinfektiva zur systemischen Anwendung",
+                "lit": "Kipras-Nikosija: Sistemi\u0161kai veikiantys prie\u0161infekciniai vaistai ir vakcinos",
+                "ita": "Cipro-Nicosia: Antinfettivi generali per uso sistemico",
+                "bul": "\u041a\u0438\u043f\u044ap-\u041d\u0438\u043a\u043e\u0437\u0438\u044f: \u041e\u0431\u0449\u0438 \u043f\u0440\u043e\u0442\u0438\u0432\u043e\u0432\u044a\u0437\u043f\u0430\u043b\u0438\u0442\u0435\u043b\u043d\u0438 \u0441\u0440\u0435\u0434\u0441\u0442\u0432\u0430 \u0437\u0430 \u0441\u0438\u0441\u0442\u0435\u043c\u043d\u0430 \u0443\u043f\u043e\u0442\u0440\u0435\u0431\u0430 \u0438 \u0432\u0430\u043a\u0441\u0438\u043d\u0438",
+                "slv": "Ciper-Nikozija: Splo\u0161na zdravila za sistemsko zdravljenje infekcij in cepiva",
+                "eng": "Cyprus-Nicosia: General anti-infectives for systemic use and vaccines"
+            },
+            "form-type": "competition"
+        }
+    ],
+    "totalNoticeCount": 14343,
+    "iterationNextToken": null,
+    "timedOut": false
+}

@@ -78,6 +78,9 @@ CREATE INDEX idx_tenders_external_ids ON tenders USING gin (external_ids);
 -- id (e.g. data.gov.cy's CFTID) stored in external_ids.
 CREATE UNIQUE INDEX idx_tenders_source_cftid ON tenders (source, (external_ids->>'cftid'))
     WHERE external_ids ? 'cftid';
+-- Same, for TED's publication-number.
+CREATE UNIQUE INDEX idx_tenders_source_ted_id ON tenders (source, (external_ids->>'ted'))
+    WHERE external_ids ? 'ted';
 CREATE INDEX idx_tenders_title_fts ON tenders USING gin (
     to_tsvector('simple', coalesce(title_en, '') || ' ' || coalesce(title_el, ''))
 );
