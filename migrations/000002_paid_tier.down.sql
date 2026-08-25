@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS saved_searches;
+DROP TABLE IF EXISTS watchlist;
+DROP TABLE IF EXISTS alert_log;
+DROP TABLE IF EXISTS user_alerts;
+DROP TABLE IF EXISTS magic_link_tokens;
+DROP TABLE IF EXISTS users;
