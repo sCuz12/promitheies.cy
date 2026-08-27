@@ -127,6 +127,7 @@ var strings_ = map[string]map[Lang]string{
 		LangEL: "Τα δεδομένα προέρχονται από το data.gov.cy και το TED (Tenders Electronic Daily). Δεν αποτελεί επίσημη κρατική υπηρεσία. πρόκειται για ανεξάρτητο δημόσιο μητρώο δημοσιοποιημένων στοιχείων συμβάσεων.",
 		LangEN: "Data from data.gov.cy and TED (Tenders Electronic Daily). Not an official government service. an independent public register of disclosed procurement records.",
 	},
+	"footer.follow": {LangEL: "@sCuz123 στο X", LangEN: "@sCuz123 on X"},
 
 	// page titles
 	"title.home":        {LangEL: "Επισκόπηση", LangEN: "Dashboard"},
@@ -143,7 +144,7 @@ var strings_ = map[string]map[Lang]string{
 	// home hero
 	"home.eyebrow":   {LangEL: "Δημόσιο μητρώο · data.gov.cy + TED", LangEN: "Public register · data.gov.cy + TED"},
 	"home.h1":        {LangEL: "Οι δημόσιες συμβάσεις της Κύπρου, σε ένα σημείο", LangEN: "Cyprus public procurement, in one place"},
-	"home.sub":       {LangEL: "Κάθε διαγωνισμός, ανάθεση και ανάδοχος που δημοσιοποιεί το κράτος. τεκμηριωμένα και δωρεάν.", LangEN: "Every tender, award and contractor the state discloses — searchable, sourced, and free."},
+	"home.sub":       {LangEL: "Κάθε διαγωνισμός, ανάθεση και ανάδοχος που δημοσιοποιεί το κράτος. τεκμηριωμένα και δωρεάν.", LangEN: "Every tender, award and contractor the state discloses. searchable, sourced, and free."},
 	"stat.tenders":   {LangEL: "διαγωνισμοί", LangEN: "tenders tracked"},
 	"stat.awards":    {LangEL: "αναθέσεις", LangEN: "awards recorded"},
 	"stat.value":     {LangEL: "συνολική αξία αναθέσεων", LangEN: "total awarded value"},
@@ -212,7 +213,7 @@ var strings_ = map[string]map[Lang]string{
 // EU classification codes, or things about the data itself worth flagging.
 var tips = map[string]map[Lang]string{
 	"cpv": {
-		LangEL: "CPV: το κοινό λεξιλόγιο της ΕΕ για δημόσιες συμβάσεις — ταξινομεί κάθε διαγωνισμό ανά αντικείμενο (π.χ. κατασκευές, ιατρικός εξοπλισμός).",
+		LangEL: "CPV: το κοινό λεξιλόγιο της ΕΕ για δημόσιες συμβάσεις. ταξινομεί κάθε διαγωνισμό ανά αντικείμενο (π.χ. κατασκευές, ιατρικός εξοπλισμός).",
 		LangEN: "CPV: the EU's Common Procurement Vocabulary. Classifies each tender by what it's actually for (e.g. construction, medical equipment).",
 	},
 	"authority.file": {

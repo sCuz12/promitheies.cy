@@ -17,7 +17,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{{block "title" .}}Promitheies.cy{{end}} — Promitheies.cy</title>
+<title>{{block "title" .}}Symvaseis.cy{{end}} — Symvaseis.cy</title>
 <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +26,7 @@
 </head>
 <body>
 <header class="site-header">
-  <a class="brand" href="/">{{template "island-mark" "brand-mark"}}Promitheies<span class="cy">.cy</span></a>
+  <a class="brand" href="/">{{template "island-mark" "brand-mark"}}Symvaseis<span class="cy">.cy</span></a>
   <div class="header-right">
     <nav>
       <a href="/authorities">{{.T "nav.authorities"}}</a>
@@ -45,6 +45,10 @@
 <footer class="site-footer">
   {{template "registry-stamp" .}}
   <p>{{.T "footer.attribution"}}</p>
+  <a class="footer-x" href="https://x.com/sCuz123" target="_blank" rel="noopener me" aria-label="X · @sCuz123">
+    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.451-6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    <span>{{.T "footer.follow"}}</span>
+  </a>
 </footer>
 </body>
 </html>

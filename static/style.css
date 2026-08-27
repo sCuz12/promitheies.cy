@@ -510,3 +510,16 @@ h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .footer-stamp path { fill: currentColor; }
 .footer-stamp circle { stroke: currentColor; fill: none; }
 .site-footer p { margin: 0; max-width: 46ch; }
+.footer-x {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  border-bottom: 1px solid transparent;
+  flex-basis: 100%;
+}
+.footer-x svg { flex-shrink: 0; }
+.footer-x:hover { color: var(--copper-dark); border-bottom-color: transparent; }
+.footer-x:hover span { border-bottom: 1px solid currentColor; }
