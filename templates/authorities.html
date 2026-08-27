@@ -1,13 +1,15 @@
-{{define "title"}}Authorities{{end}}
+{{define "title"}}{{.T "title.authorities"}}{{end}}
 {{define "content"}}
-<h1>Authorities</h1>
-<p class="muted">{{len .}} authorities with awarded contracts, ranked by total value.</p>
+<p class="breadcrumb">{{.T "breadcrumb.registry"}} / {{.T "breadcrumb.authorities"}}</p>
+<h1>{{.T "title.authorities"}}</h1>
+<p class="muted">{{printf (.T "authorities.subtitle") (len .Data)}}</p>
+<div class="table-scroll">
 <table class="data-table">
-  <thead><tr><th>#</th><th>Authority</th><th class="num">Awards</th><th class="num">Total value</th></tr></thead>
+  <thead><tr><th>{{.T "th.rownum"}}</th><th>{{.T "th.authority"}}</th><th class="num">{{.T "th.awards"}}</th><th class="num">{{.T "th.totalvalue"}}</th></tr></thead>
   <tbody>
-  {{range $i, $a := .}}
+  {{range $i, $a := .Data}}
     <tr>
-      <td class="nowrap">{{inc $i}}</td>
+      <td class="rownum">{{inc $i}}</td>
       <td><a href="/authority/{{$a.Slug}}">{{$a.Name}}</a></td>
       <td class="num">{{$a.Count | commas}}</td>
       <td class="num">€{{$a.Total | euro}}</td>
@@ -15,4 +17,5 @@
   {{end}}
   </tbody>
 </table>
+</div>
 {{end}}

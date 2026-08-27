@@ -1,13 +1,15 @@
-{{define "title"}}Contractors{{end}}
+{{define "title"}}{{.T "title.contractors"}}{{end}}
 {{define "content"}}
-<h1>Contractors</h1>
-<p class="muted">Top {{len .}} contractors by total awarded value.</p>
+<p class="breadcrumb">{{.T "breadcrumb.registry"}} / {{.T "breadcrumb.contractors"}}</p>
+<h1>{{.T "title.contractors"}}</h1>
+<p class="muted">{{printf (.T "contractors.subtitle") (len .Data)}}</p>
+<div class="table-scroll">
 <table class="data-table">
-  <thead><tr><th>#</th><th>Contractor</th><th class="num">Awards</th><th class="num">Total value</th></tr></thead>
+  <thead><tr><th>{{.T "th.rownum"}}</th><th>{{.T "th.contractor"}}</th><th class="num">{{.T "th.awards"}}</th><th class="num">{{.T "th.totalvalue"}}</th></tr></thead>
   <tbody>
-  {{range $i, $c := .}}
+  {{range $i, $c := .Data}}
     <tr>
-      <td class="nowrap">{{inc $i}}</td>
+      <td class="rownum">{{inc $i}}</td>
       <td><a href="/contractor/{{$c.Slug}}">{{$c.Name}}</a></td>
       <td class="num">{{$c.Count | commas}}</td>
       <td class="num">€{{$c.Total | euro}}</td>
@@ -15,4 +17,5 @@
   {{end}}
   </tbody>
 </table>
+</div>
 {{end}}

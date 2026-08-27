@@ -1,34 +1,53 @@
-{{define "title"}}Search{{end}}
+{{define "title"}}{{.T "title.search"}}{{end}}
 {{define "content"}}
-<h1>Search tenders</h1>
+<p class="breadcrumb">{{.T "breadcrumb.registry"}} / {{.T "breadcrumb.search"}}</p>
+<h1>{{.T "search.h1"}}</h1>
 <form class="search-form" method="get" action="/search">
-  <input type="text" name="q" placeholder="Title keywords…" value="{{.Query}}">
-  <select name="cpv">
-    <option value="">All sectors</option>
-    {{range .Divisions}}
-      <option value="{{.Code}}" {{if eq .Code $.CPVDivision}}selected{{end}}>{{.DescriptionEN}}</option>
-    {{end}}
-  </select>
-  <button type="submit">Search</button>
+  <div class="field">
+    <label for="q">{{.T "search.keywords"}}</label>
+    <input id="q" type="text" name="q" placeholder="{{.T "search.keywords.ph"}}" value="{{.Data.Query}}">
+  </div>
+  <div class="field">
+    <label for="cpv">{{.T "search.sector"}} {{template "tip" (.Tip "cpv")}}</label>
+    <select id="cpv" name="cpv">
+      <option value="">{{.T "search.allsectors"}}</option>
+      {{$p := .}}
+      {{range .Data.Divisions}}
+        <option value="{{.Code}}" {{if eq .Code $p.Data.CPVDivision}}selected{{end}}>{{if $p.IsEL}}{{.DescriptionEL}}{{else}}{{.DescriptionEN}}{{end}}</option>
+      {{end}}
+    </select>
+  </div>
+  <button type="submit">{{.T "search.submit"}}</button>
 </form>
 
-{{if .Results}}
+{{if .Data.Results}}
+<div class="table-scroll">
 <table class="data-table">
-  <thead><tr><th>Date</th><th>Title</th><th>Authority</th><th>Sector</th><th>Status</th><th class="num">Est. value</th></tr></thead>
+  <thead><tr><th>{{.T "th.date"}}</th><th>{{.T "th.title"}}</th><th>{{.T "th.authority"}}</th><th>{{.T "th.sector"}}</th><th>{{.T "th.status"}}</th><th class="num">{{.T "th.estvalue"}}</th></tr></thead>
   <tbody>
-  {{range .Results}}
+  {{$p := .}}
+  {{range .Data.Results}}
     <tr>
       <td class="nowrap">{{if .PublishedAt}}{{.PublishedAt}}{{else}}—{{end}}</td>
       <td>{{.Title}}</td>
       <td><a href="/authority/{{.AuthoritySlug}}">{{.AuthorityName}}</a></td>
-      <td>{{if .CPVDivision}}{{.CPVDivision | cpvName}}{{else}}—{{end}}</td>
-      <td><span class="badge badge-{{.Status}}">{{.Status}}</span></td>
+      <td>{{if .CPVDivision}}{{cpvName $p.Lang .CPVDivision}}{{else}}—{{end}}</td>
+      <td><span class="badge badge-{{.Status}}" title="{{$p.Tip (printf "status.%s" .Status)}}">{{$p.T (printf "status.%s" .Status)}}</span></td>
       <td class="num">{{if .EstimatedVal}}€{{.EstimatedVal | euro}}{{else}}—{{end}}</td>
     </tr>
   {{end}}
   </tbody>
 </table>
-{{else if or .Query .CPVDivision}}
-<p class="muted">No tenders matched.</p>
+</div>
+{{else if or .Data.Query .Data.CPVDivision}}
+<div class="empty-state">
+  <p>{{.T "search.empty.noresults"}}</p>
+  <p class="muted">{{.T "search.empty.tryfewer"}}</p>
+</div>
+{{else}}
+<div class="empty-state">
+  <p>{{.T "search.empty.prompt"}}</p>
+  <p class="muted">{{.T "search.empty.hint"}}</p>
+</div>
 {{end}}
 {{end}}

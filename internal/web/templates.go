@@ -16,7 +16,7 @@ var funcMap = template.FuncMap{
 		return groupThousands(strconv.FormatFloat(v, 'f', 0, 64))
 	},
 	"inc":     func(i int) int { return i + 1 },
-	"cpvName": func(code string) string { return cpv.Name(code) },
+	"cpvName": func(lang Lang, code string) string { return cpv.NameLang(string(lang), code) },
 }
 
 // groupThousands inserts "," every three digits from the right of an
@@ -68,14 +68,15 @@ func loadTemplates(dir string) (map[string]*template.Template, error) {
 	return templates, nil
 }
 
-func (s *Server) render(w http.ResponseWriter, page string, data any) {
+func (s *Server) render(w http.ResponseWriter, r *http.Request, page string, data any) {
 	t, ok := s.templates[page]
 	if !ok {
 		http.Error(w, "template not found: "+page, http.StatusInternalServerError)
 		return
 	}
+	lang := s.resolveLang(w, r)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := t.ExecuteTemplate(w, "layout", data); err != nil {
+	if err := t.ExecuteTemplate(w, "layout", newPage(lang, r, data)); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

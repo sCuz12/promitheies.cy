@@ -1,26 +1,50 @@
+{{define "island-mark"}}<svg viewBox="0 0 48 24" class="{{.}}" aria-hidden="true"><path d="M4,12 C3,8 8,5 14,6 C22,4 32,5 40,8 C45,10 46,12 43,14 C38,16 30,17 24,16 C22,19 17,20 15,18 C10,17 6,16 4,12 Z"/></svg>{{end}}
+
+{{define "registry-stamp"}}<svg viewBox="0 0 120 120" class="footer-stamp" aria-hidden="true">
+  <defs><path id="stampArc" d="M 14,64 A 46,46 0 1 1 106,64" /></defs>
+  <circle cx="60" cy="60" r="56" stroke-width="2" stroke-dasharray="2 3"/>
+  <circle cx="60" cy="60" r="46" stroke-width="1.25"/>
+  <text font-size="9.5" font-weight="700" letter-spacing="2"><textPath href="#stampArc" startOffset="50%" text-anchor="middle">PUBLIC RECORD</textPath></text>
+  <g transform="translate(28,44) scale(1.3)"><path d="M4,12 C3,8 8,5 14,6 C22,4 32,5 40,8 C45,10 46,12 43,14 C38,16 30,17 24,16 C22,19 17,20 15,18 C10,17 6,16 4,12 Z"/></g>
+  <text x="60" y="100" font-size="8" font-weight="700" letter-spacing="1.5" text-anchor="middle">EST. 1960</text>
+</svg>{{end}}
+
+{{define "tip"}}{{if .}}<span class="tip" tabindex="0"><span class="tip-icon" aria-hidden="true">ⓘ</span><span class="tip-bubble" role="tooltip">{{.}}</span></span>{{end}}{{end}}
+
 {{define "layout"}}
 <!doctype html>
-<html lang="en">
+<html lang="{{.Lang}}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{{block "title" .}}Promitheies.cy{{end}} — Promitheies.cy</title>
+<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 <header class="site-header">
-  <a class="brand" href="/">Promitheies<span class="dot">.cy</span></a>
-  <nav>
-    <a href="/authorities">Authorities</a>
-    <a href="/contractors">Contractors</a>
-    <a href="/search">Search</a>
-  </nav>
+  <a class="brand" href="/">{{template "island-mark" "brand-mark"}}Promitheies<span class="cy">.cy</span></a>
+  <div class="header-right">
+    <nav>
+      <a href="/authorities">{{.T "nav.authorities"}}</a>
+      <a href="/contractors">{{.T "nav.contractors"}}</a>
+      <a href="/search">{{.T "nav.search"}}</a>
+    </nav>
+    <div class="lang-switch">
+      <a href="{{.SwitchURL "el"}}" {{if .IsEL}}class="active"{{end}}>{{.T "lang.label.el"}}</a>
+      <a href="{{.SwitchURL "en"}}" {{if not .IsEL}}class="active"{{end}}>{{.T "lang.label.en"}}</a>
+    </div>
+  </div>
 </header>
 <main>
 {{block "content" .}}{{end}}
 </main>
 <footer class="site-footer">
-  <p>Data from data.gov.cy and TED (Tenders Electronic Daily). Not an official government service.</p>
+  {{template "registry-stamp" .}}
+  <p>{{.T "footer.attribution"}}</p>
 </footer>
 </body>
 </html>

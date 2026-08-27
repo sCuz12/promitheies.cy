@@ -1,32 +1,37 @@
-{{define "title"}}Dashboard{{end}}
+{{define "title"}}{{.T "title.home"}}{{end}}
 {{define "content"}}
 <section class="hero">
-  <h1>Cyprus public procurement, in one place</h1>
+  <img class="hero-watermark" src="/static/cyprus_flag.png" alt="" aria-hidden="true">
+
+  <span class="eyebrow">{{.T "home.eyebrow"}}</span>
+  <h1>{{.T "home.h1"}}</h1>
+  <p class="hero-sub">{{.T "home.sub"}}</p>
   <div class="stat-row">
     <div class="stat-tile">
-      <span class="stat-value">{{.TotalTenders | commas}}</span>
-      <span class="stat-label">tenders tracked</span>
+      <span class="stat-value">{{.Data.TotalTenders | commas}}</span>
+      <span class="stat-label">{{.T "stat.tenders"}} {{template "tip" (.Tip "stat.tenders")}}</span>
     </div>
     <div class="stat-tile">
-      <span class="stat-value">{{.TotalAwards | commas}}</span>
-      <span class="stat-label">awards recorded</span>
+      <span class="stat-value">{{.Data.TotalAwards | commas}}</span>
+      <span class="stat-label">{{.T "stat.awards"}} {{template "tip" (.Tip "stat.awards")}}</span>
     </div>
     <div class="stat-tile">
-      <span class="stat-value">€{{.TotalValue | euro}}</span>
-      <span class="stat-label">total awarded value</span>
+      <span class="stat-value">€{{.Data.TotalValue | euro}}</span>
+      <span class="stat-label">{{.T "stat.value"}} {{template "tip" (.Tip "stat.value")}}</span>
     </div>
   </div>
   <div class="source-row">
-    {{range .BySource}}<span class="source-pill">{{.Source}}: {{.Count | commas}}</span>{{end}}
+    {{range .Data.BySource}}<span class="source-pill">{{.Source}}: {{.Count | commas}}</span>{{end}}
   </div>
 </section>
 
 <section>
-  <h2>Recent awards</h2>
+  <h2>{{.T "section.recent"}}</h2>
+  <div class="table-scroll">
   <table class="data-table">
-    <thead><tr><th>Date</th><th>Tender</th><th>Authority</th><th>Contractor</th><th class="num">Value</th></tr></thead>
+    <thead><tr><th>{{.T "th.date"}}</th><th>{{.T "th.tender"}}</th><th>{{.T "th.authority"}}</th><th>{{.T "th.contractor"}}</th><th class="num">{{.T "th.value"}}</th></tr></thead>
     <tbody>
-    {{range .RecentAwards}}
+    {{range .Data.RecentAwards}}
       <tr>
         <td class="nowrap">{{if .AwardDate}}{{.AwardDate}}{{else}}—{{end}}</td>
         <td>{{.TenderTitle}}</td>
@@ -37,5 +42,6 @@
     {{end}}
     </tbody>
   </table>
+  </div>
 </section>
 {{end}}

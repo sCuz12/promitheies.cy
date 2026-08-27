@@ -13,7 +13,7 @@ func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 		s.serverError(w, err)
 		return
 	}
-	s.render(w, "home", stats)
+	s.render(w, r, "home", stats)
 }
 
 func (s *Server) handleAuthorities(w http.ResponseWriter, r *http.Request) {
@@ -22,7 +22,7 @@ func (s *Server) handleAuthorities(w http.ResponseWriter, r *http.Request) {
 		s.serverError(w, err)
 		return
 	}
-	s.render(w, "authorities", list)
+	s.render(w, r, "authorities", list)
 }
 
 func (s *Server) handleAuthority(w http.ResponseWriter, r *http.Request) {
@@ -32,7 +32,7 @@ func (s *Server) handleAuthority(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	s.render(w, "authority", a)
+	s.render(w, r, "authority", a)
 }
 
 func (s *Server) handleContractors(w http.ResponseWriter, r *http.Request) {
@@ -41,7 +41,7 @@ func (s *Server) handleContractors(w http.ResponseWriter, r *http.Request) {
 		s.serverError(w, err)
 		return
 	}
-	s.render(w, "contractors", list)
+	s.render(w, r, "contractors", list)
 }
 
 func (s *Server) handleContractor(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +51,7 @@ func (s *Server) handleContractor(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	s.render(w, "contractor", c)
+	s.render(w, r, "contractor", c)
 }
 
 type searchPageData struct {
@@ -76,7 +76,7 @@ func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 		data.Results = results
 	}
 
-	s.render(w, "search", data)
+	s.render(w, r, "search", data)
 }
 
 func (s *Server) serverError(w http.ResponseWriter, err error) {

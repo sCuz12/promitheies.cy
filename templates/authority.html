@@ -1,19 +1,23 @@
-{{define "title"}}{{.Name}}{{end}}
+{{define "title"}}{{.Data.Name}}{{end}}
 {{define "content"}}
-<p class="breadcrumb"><a href="/authorities">Authorities</a> / {{.Name}}</p>
-<h1>{{.Name}}</h1>
+<p class="breadcrumb"><a href="/authorities">{{.T "breadcrumb.authorities"}}</a> / {{.Data.Name}}</p>
+<div class="entity-header">
+  <span class="registry-id">{{.T "authority.file"}} {{printf "%05d" .Data.ID}}{{template "tip" (.Tip "authority.file")}}{{if .Data.Type}} · {{.Data.Type}}{{end}}{{if .Data.Region}} · {{.Data.Region}}{{end}}</span>
+  <h1>{{.Data.Name}}</h1>
+</div>
 <div class="stat-row">
-  <div class="stat-tile"><span class="stat-value">{{.Count | commas}}</span><span class="stat-label">awards</span></div>
-  <div class="stat-tile"><span class="stat-value">€{{.Total | euro}}</span><span class="stat-label">total value</span></div>
+  <div class="stat-tile"><span class="stat-value">{{.Data.Count | commas}}</span><span class="stat-label">{{.T "authority.stat.count"}}</span></div>
+  <div class="stat-tile"><span class="stat-value">€{{.Data.Total | euro}}</span><span class="stat-label">{{.T "authority.stat.total"}}</span></div>
 </div>
 
 <div class="two-col">
   <section>
-    <h2>Top contractors</h2>
+    <h2>{{.T "authority.topcontractors"}}</h2>
+    <div class="table-scroll">
     <table class="data-table">
-      <thead><tr><th>Contractor</th><th class="num">Awards</th><th class="num">Value</th></tr></thead>
+      <thead><tr><th>{{.T "th.contractor"}}</th><th class="num">{{.T "th.awards"}}</th><th class="num">{{.T "th.value"}}</th></tr></thead>
       <tbody>
-      {{range .TopContractors}}
+      {{range .Data.TopContractors}}
         <tr>
           <td><a href="/contractor/{{.Slug}}">{{.Name}}</a></td>
           <td class="num">{{.Count | commas}}</td>
@@ -22,31 +26,36 @@
       {{end}}
       </tbody>
     </table>
+    </div>
   </section>
 
   <section>
-    <h2>Spend by sector</h2>
+    <h2>{{.T "authority.sectorbreakdown"}} {{template "tip" (.Tip "authority.sectorbreakdown")}}</h2>
+    <div class="table-scroll">
     <table class="data-table">
-      <thead><tr><th>CPV division</th><th class="num">Awards</th><th class="num">Value</th></tr></thead>
+      <thead><tr><th>{{.T "th.cpvdivision"}} {{template "tip" (.Tip "cpv")}}</th><th class="num">{{.T "th.awards"}}</th><th class="num">{{.T "th.value"}}</th></tr></thead>
       <tbody>
-      {{range .SectorBreakdown}}
+      {{$p := .}}
+      {{range .Data.SectorBreakdown}}
         <tr>
-          <td>{{.CPVDivision | cpvName}}</td>
+          <td>{{cpvName $p.Lang .CPVDivision}}</td>
           <td class="num">{{.Count | commas}}</td>
           <td class="num">€{{.Total | euro}}</td>
         </tr>
       {{end}}
       </tbody>
     </table>
+    </div>
   </section>
 </div>
 
 <section>
-  <h2>Recent awards</h2>
+  <h2>{{.T "section.recent"}}</h2>
+  <div class="table-scroll">
   <table class="data-table">
-    <thead><tr><th>Date</th><th>Tender</th><th>Contractor</th><th class="num">Value</th></tr></thead>
+    <thead><tr><th>{{.T "th.date"}}</th><th>{{.T "th.tender"}}</th><th>{{.T "th.contractor"}}</th><th class="num">{{.T "th.value"}}</th></tr></thead>
     <tbody>
-    {{range .RecentAwards}}
+    {{range .Data.RecentAwards}}
       <tr>
         <td class="nowrap">{{if .AwardDate}}{{.AwardDate}}{{else}}—{{end}}</td>
         <td>{{.TenderTitle}}</td>
@@ -56,5 +65,6 @@
     {{end}}
     </tbody>
   </table>
+  </div>
 </section>
 {{end}}

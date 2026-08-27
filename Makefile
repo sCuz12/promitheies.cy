@@ -1,7 +1,7 @@
 include .env
 export
 
-.PHONY: up down migrate-up migrate-down build run test seed
+.PHONY: up down migrate-up migrate-down build run test seed ingest-ted ingest-datagovcy
 
 up:
 	docker compose up -d
@@ -32,3 +32,9 @@ test:
 
 seed:
 	go run ./cmd/jobs seed-cpv
+
+ingest-ted:
+	go run ./cmd/ingest-ted
+
+ingest-datagovcy:
+	go run ./cmd/ingest-datagovcy
