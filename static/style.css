@@ -160,6 +160,18 @@ h2 {
 h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 
 .muted { color: var(--ink-muted); }
+.page-subtitle {
+  max-width: 68ch;
+  margin: .2rem 0 1.2rem;
+  color: var(--ink-muted);
+}
+.source-note {
+  display: inline-block;
+  margin-left: .55rem;
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  color: var(--ink-faint);
+}
 .breadcrumb {
   font-family: var(--font-mono);
   color: var(--ink-faint);
@@ -266,6 +278,17 @@ h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
   padding: .28rem .65rem;
   border-radius: 3px;
   margin: 0 .5rem .5rem 0;
+}
+.source-chip {
+  display: inline-block;
+  border: 1px solid var(--line-strong);
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: .66rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  padding: .16rem .42rem;
 }
 
 /* ---------- registry entry header (authority / contractor) ---------- */

@@ -114,9 +114,10 @@ func Tip(lang Lang, key string) string {
 // Named with a trailing underscore to avoid shadowing the "strings" package.
 var strings_ = map[string]map[Lang]string{
 	// nav
-	"nav.authorities": {LangEL: "Αρχές", LangEN: "Authorities"},
-	"nav.contractors": {LangEL: "Ανάδοχοι", LangEN: "Contractors"},
-	"nav.search":      {LangEL: "Αναζήτηση", LangEN: "Search"},
+	"nav.authorities":  {LangEL: "Αρχές", LangEN: "Authorities"},
+	"nav.contractors":  {LangEL: "Ανάδοχοι", LangEN: "Contractors"},
+	"nav.open_tenders": {LangEL: "Διαγωνισμοί", LangEN: "Open tenders"},
+	"nav.search":       {LangEL: "Αναζήτηση", LangEN: "Search"},
 
 	// language switch
 	"lang.label.el": {LangEL: "ΕΛ", LangEN: "ΕΛ"},
@@ -130,16 +131,18 @@ var strings_ = map[string]map[Lang]string{
 	"footer.follow": {LangEL: "@sCuz123 στο X", LangEN: "@sCuz123 on X"},
 
 	// page titles
-	"title.home":        {LangEL: "Επισκόπηση", LangEN: "Dashboard"},
-	"title.authorities": {LangEL: "Αναθέτουσες Αρχές", LangEN: "Authorities"},
-	"title.contractors": {LangEL: "Ανάδοχοι", LangEN: "Contractors"},
-	"title.search":      {LangEL: "Αναζήτηση", LangEN: "Search"},
+	"title.home":         {LangEL: "Επισκόπηση", LangEN: "Dashboard"},
+	"title.authorities":  {LangEL: "Αναθέτουσες Αρχές", LangEN: "Authorities"},
+	"title.contractors":  {LangEL: "Ανάδοχοι", LangEN: "Contractors"},
+	"title.open_tenders": {LangEL: "Ανοιχτοί Διαγωνισμοί", LangEN: "Open Tenders"},
+	"title.search":       {LangEL: "Αναζήτηση", LangEN: "Search"},
 
 	// breadcrumbs
-	"breadcrumb.registry":    {LangEL: "Μητρώο", LangEN: "Registry"},
-	"breadcrumb.authorities": {LangEL: "Αναθέτουσες Αρχές", LangEN: "Authorities"},
-	"breadcrumb.contractors": {LangEL: "Ανάδοχοι", LangEN: "Contractors"},
-	"breadcrumb.search":      {LangEL: "Αναζήτηση", LangEN: "Search"},
+	"breadcrumb.registry":     {LangEL: "Μητρώο", LangEN: "Registry"},
+	"breadcrumb.authorities":  {LangEL: "Αναθέτουσες Αρχές", LangEN: "Authorities"},
+	"breadcrumb.contractors":  {LangEL: "Ανάδοχοι", LangEN: "Contractors"},
+	"breadcrumb.open_tenders": {LangEL: "Ανοιχτοί Διαγωνισμοί", LangEN: "Open Tenders"},
+	"breadcrumb.search":       {LangEL: "Αναζήτηση", LangEN: "Search"},
 
 	// home hero
 	"home.eyebrow":   {LangEL: "Δημόσιο μητρώο · data.gov.cy + TED", LangEN: "Public register · data.gov.cy + TED"},
@@ -152,12 +155,15 @@ var strings_ = map[string]map[Lang]string{
 
 	// table headers
 	"th.date":        {LangEL: "Ημερομηνία", LangEN: "Date"},
+	"th.published":   {LangEL: "Δημοσίευση", LangEN: "Published"},
 	"th.tender":      {LangEL: "Διαγωνισμός", LangEN: "Tender"},
 	"th.title":       {LangEL: "Τίτλος", LangEN: "Title"},
 	"th.authority":   {LangEL: "Αρχή", LangEN: "Authority"},
 	"th.contractor":  {LangEL: "Ανάδοχος", LangEN: "Contractor"},
+	"th.deadline":    {LangEL: "Προθεσμία", LangEN: "Deadline"},
 	"th.value":       {LangEL: "Αξία", LangEN: "Value"},
 	"th.estvalue":    {LangEL: "Εκτ. αξία", LangEN: "Est. value"},
+	"th.source":      {LangEL: "Πηγή", LangEN: "Source"},
 	"th.awards":      {LangEL: "Αναθέσεις", LangEN: "Awards"},
 	"th.totalvalue":  {LangEL: "Συνολική αξία", LangEN: "Total value"},
 	"th.rownum":      {LangEL: "Α/Α", LangEN: "#"},
@@ -189,6 +195,24 @@ var strings_ = map[string]map[Lang]string{
 	"contractor.stat.count":  {LangEL: "κερδισμένες αναθέσεις", LangEN: "awards won"},
 	"contractor.stat.total":  {LangEL: "συνολική αξία", LangEN: "total value"},
 	"contractor.authorities": {LangEL: "Συνεργασία με αρχές", LangEN: "Authorities worked with"},
+
+	// open tenders page
+	"open_tenders.h1": {LangEL: "Ανοιχτοί διαγωνισμοί", LangEN: "Open tenders"},
+	"open_tenders.subtitle": {
+		LangEL: "Τρέχουσες ευκαιρίες από το TED για έργα, προμήθειες και υπηρεσίες με τόπο εκτέλεσης την Κύπρο.",
+		LangEN: "Current TED opportunities for works, supplies and services with Cyprus as the place of performance.",
+	},
+	"open_tenders.updated":     {LangEL: "Τελευταία ενημέρωση TED:", LangEN: "Last TED update:"},
+	"open_tenders.keywords.ph": {LangEL: "π.χ. φάρμακα, κατασκευές, υπηρεσίες καθαρισμού…", LangEN: "e.g. medicine, construction, cleaning services…"},
+	"open_tenders.submit":      {LangEL: "Φιλτράρισμα", LangEN: "Filter"},
+	"open_tenders.empty.noresults": {
+		LangEL: "Δεν βρέθηκαν ανοιχτοί διαγωνισμοί.",
+		LangEN: "No open tenders matched.",
+	},
+	"open_tenders.empty.tryfewer": {
+		LangEL: "Δοκιμάστε λιγότερες λέξεις-κλειδιά ή καθαρίστε το φίλτρο τομέα.",
+		LangEN: "Try fewer keywords, or clear the sector filter.",
+	},
 
 	// search page
 	"search.h1":              {LangEL: "Αναζήτηση στο μητρώο διαγωνισμών", LangEN: "Search the tender register"},

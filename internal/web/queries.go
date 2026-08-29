@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/georgehadjisavvas/promitheies-cy/internal/cpv"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -301,6 +302,14 @@ type SearchResult struct {
 	Tenders []TenderRow
 }
 
+type OpenTendersPageData struct {
+	Query       string
+	CPVDivision string
+	Divisions   []cpv.Division
+	LastUpdated *string
+	Results     []TenderRow
+}
+
 type TenderRow struct {
 	ID            int64
 	Slug          string
@@ -311,7 +320,9 @@ type TenderRow struct {
 	EstimatedVal  *float64
 	Status        string
 	PublishedAt   *string
+	Deadline      *string
 	Source        string
+	ExternalID    *string
 }
 
 // SearchTenders does a full-text search (matching the datagovcy/ted title
@@ -320,7 +331,7 @@ type TenderRow struct {
 func SearchTenders(ctx context.Context, pool *pgxpool.Pool, q, authoritySlug, cpvDivision string, limit int) ([]TenderRow, error) {
 	rows, err := pool.Query(ctx, `
 		SELECT t.id, coalesce(t.title_el, t.title_en, ''), auth.slug, coalesce(auth.canonical_name_el, auth.canonical_name_en, ''),
-		       t.cpv_division, t.estimated_value, t.status, to_char(t.published_at, 'YYYY-MM-DD'), t.source
+		       t.cpv_division, t.estimated_value, t.status, to_char(t.published_at, 'YYYY-MM-DD'), to_char(t.deadline, 'YYYY-MM-DD'), t.source, NULL::text
 		FROM tenders t
 		JOIN authorities auth ON auth.id = t.authority_id
 		WHERE ($1 = '' OR to_tsvector('simple', coalesce(t.title_en,'') || ' ' || coalesce(t.title_el,'')) @@ plainto_tsquery('simple', $1))
@@ -338,11 +349,63 @@ func SearchTenders(ctx context.Context, pool *pgxpool.Pool, q, authoritySlug, cp
 	for rows.Next() {
 		var r TenderRow
 		var authoritySlug string
-		if err := rows.Scan(&r.ID, &r.Title, &authoritySlug, &r.AuthorityName, &r.CPVDivision, &r.EstimatedVal, &r.Status, &r.PublishedAt, &r.Source); err != nil {
+		if err := rows.Scan(&r.ID, &r.Title, &authoritySlug, &r.AuthorityName, &r.CPVDivision, &r.EstimatedVal, &r.Status, &r.PublishedAt, &r.Deadline, &r.Source, &r.ExternalID); err != nil {
 			return nil, err
 		}
 		r.AuthoritySlug = authoritySlug
 		out = append(out, r)
 	}
 	return out, rows.Err()
+}
+
+// ListOpenTenders returns the TED-backed open tender feed shown to users.
+// data.gov.cy is intentionally excluded here: it is an awarded-contracts
+// dataset, while TED is our current source for live opportunity notices.
+func ListOpenTenders(ctx context.Context, pool *pgxpool.Pool, q, cpvDivision string, limit int) ([]TenderRow, error) {
+	rows, err := pool.Query(ctx, `
+		SELECT t.id, coalesce(t.title_el, t.title_en, ''), auth.slug, coalesce(auth.canonical_name_el, auth.canonical_name_en, ''),
+		       t.cpv_division, t.estimated_value, t.status, to_char(t.published_at, 'YYYY-MM-DD'), to_char(t.deadline, 'YYYY-MM-DD'),
+		       t.source, t.external_ids->>'ted'
+		FROM tenders t
+		JOIN authorities auth ON auth.id = t.authority_id
+		WHERE t.source = 'ted'
+		  AND t.status = 'open'
+		  AND (t.deadline IS NULL OR t.deadline >= CURRENT_DATE)
+		  AND ($1 = '' OR to_tsvector('simple', coalesce(t.title_en,'') || ' ' || coalesce(t.title_el,'')) @@ plainto_tsquery('simple', $1))
+		  AND ($2 = '' OR t.cpv_division = $2)
+		ORDER BY t.published_at DESC NULLS LAST, t.id DESC
+		LIMIT $3
+	`, q, cpvDivision, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var out []TenderRow
+	for rows.Next() {
+		var r TenderRow
+		if err := rows.Scan(
+			&r.ID, &r.Title, &r.AuthoritySlug, &r.AuthorityName,
+			&r.CPVDivision, &r.EstimatedVal, &r.Status, &r.PublishedAt,
+			&r.Deadline, &r.Source, &r.ExternalID,
+		); err != nil {
+			return nil, err
+		}
+		out = append(out, r)
+	}
+	return out, rows.Err()
+}
+
+func LastSuccessfulIngest(ctx context.Context, pool *pgxpool.Pool, source string) (*string, error) {
+	var finishedAt *string
+	err := pool.QueryRow(ctx, `
+		SELECT to_char(max(finished_at), 'YYYY-MM-DD HH24:MI')
+		FROM ingest_runs
+		WHERE source = $1
+		  AND status = 'success'
+	`, source).Scan(&finishedAt)
+	if err != nil {
+		return nil, err
+	}
+	return finishedAt, nil
 }

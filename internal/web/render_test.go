@@ -27,7 +27,7 @@ func fakePages() map[string]any {
 	return map[string]any{
 		"home": Stats{
 			TotalTenders: 72742, TotalAwards: 14343, TotalValue: 980000000,
-			BySource: []SourceCount{{Source: "data.gov.cy", Count: 58000}, {Source: "TED", Count: 14343}},
+			BySource:     []SourceCount{{Source: "data.gov.cy", Count: 58000}, {Source: "TED", Count: 14343}},
 			RecentAwards: []AwardRow{award},
 		},
 		"authorities": []EntitySummary{entity},
@@ -42,6 +42,13 @@ func fakePages() map[string]any {
 			EntitySummary: entity,
 			Authorities:   []EntitySummary{entity},
 			RecentAwards:  []AwardRow{award},
+		},
+		"open_tenders": OpenTendersPageData{
+			Query: "φάρμακα", CPVDivision: cpvDiv, Divisions: cpv.Divisions, LastUpdated: &date,
+			Results: []TenderRow{{
+				Title: "Προμήθεια φαρμάκων", AuthoritySlug: "dimos-lemesou", AuthorityName: "Δήμος Λεμεσού",
+				CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date, Source: "ted",
+			}},
 		},
 		"search": searchPageData{
 			Query: "ασφαλτόστρωση", CPVDivision: cpvDiv, Divisions: cpv.Divisions,

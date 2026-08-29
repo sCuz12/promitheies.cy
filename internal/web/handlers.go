@@ -54,6 +54,31 @@ func (s *Server) handleContractor(w http.ResponseWriter, r *http.Request) {
 	s.render(w, r, "contractor", c)
 }
 
+func (s *Server) handleOpenTenders(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query().Get("q")
+	cpvDivision := r.URL.Query().Get("cpv")
+
+	results, err := ListOpenTenders(r.Context(), s.pool, q, cpvDivision, 100)
+	if err != nil {
+		s.serverError(w, err)
+		return
+	}
+	lastUpdated, err := LastSuccessfulIngest(r.Context(), s.pool, "ted")
+	if err != nil {
+		s.serverError(w, err)
+		return
+	}
+
+	data := OpenTendersPageData{
+		Query:       q,
+		CPVDivision: cpvDivision,
+		Divisions:   cpv.Divisions,
+		LastUpdated: lastUpdated,
+		Results:     results,
+	}
+	s.render(w, r, "open_tenders", data)
+}
+
 type searchPageData struct {
 	Query       string
 	CPVDivision string

@@ -1,0 +1,64 @@
+{{define "title"}}{{.T "title.open_tenders"}}{{end}}
+{{define "content"}}
+<p class="breadcrumb">{{.T "breadcrumb.registry"}} / {{.T "breadcrumb.open_tenders"}}</p>
+<h1>{{.T "open_tenders.h1"}}</h1>
+<p class="page-subtitle">
+  {{.T "open_tenders.subtitle"}}
+  {{if .Data.LastUpdated}}<span class="source-note">{{.T "open_tenders.updated"}} {{.Data.LastUpdated}}</span>{{end}}
+</p>
+
+<form class="search-form" method="get" action="/diagonismoi">
+  <div class="field">
+    <label for="q">{{.T "search.keywords"}}</label>
+    <input id="q" type="text" name="q" placeholder="{{.T "open_tenders.keywords.ph"}}" value="{{.Data.Query}}">
+  </div>
+  <div class="field">
+    <label for="cpv">{{.T "search.sector"}} {{template "tip" (.Tip "cpv")}}</label>
+    <select id="cpv" name="cpv">
+      <option value="">{{.T "search.allsectors"}}</option>
+      {{$p := .}}
+      {{range .Data.Divisions}}
+        <option value="{{.Code}}" {{if eq .Code $p.Data.CPVDivision}}selected{{end}}>{{if $p.IsEL}}{{.DescriptionEL}}{{else}}{{.DescriptionEN}}{{end}}</option>
+      {{end}}
+    </select>
+  </div>
+  <button type="submit">{{.T "open_tenders.submit"}}</button>
+</form>
+
+{{if .Data.Results}}
+<div class="table-scroll">
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>{{.T "th.published"}}</th>
+      <th>{{.T "th.title"}}</th>
+      <th>{{.T "th.authority"}}</th>
+      <th>{{.T "th.sector"}}</th>
+      <th>{{.T "th.deadline"}}</th>
+      <th class="num">{{.T "th.estvalue"}}</th>
+      <th>{{.T "th.source"}}</th>
+    </tr>
+  </thead>
+  <tbody>
+  {{$p := .}}
+  {{range .Data.Results}}
+    <tr>
+      <td class="nowrap">{{if .PublishedAt}}{{.PublishedAt}}{{else}}—{{end}}</td>
+      <td>{{.Title}}</td>
+      <td><a href="/authority/{{.AuthoritySlug}}">{{.AuthorityName}}</a></td>
+      <td>{{if .CPVDivision}}{{cpvName $p.Lang .CPVDivision}}{{else}}—{{end}}</td>
+      <td class="nowrap">{{if .Deadline}}{{.Deadline}}{{else}}—{{end}}</td>
+      <td class="num">{{if .EstimatedVal}}€{{.EstimatedVal | euro}}{{else}}—{{end}}</td>
+      <td><span class="source-chip">{{.Source}}</span></td>
+    </tr>
+  {{end}}
+  </tbody>
+</table>
+</div>
+{{else}}
+<div class="empty-state">
+  <p>{{.T "open_tenders.empty.noresults"}}</p>
+  <p class="muted">{{.T "open_tenders.empty.tryfewer"}}</p>
+</div>
+{{end}}
+{{end}}

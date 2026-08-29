@@ -6,9 +6,11 @@ package datagovcy
 
 import (
 	"fmt"
+	"html"
 	"io"
 	"net/http"
 	"regexp"
+	"strings"
 	"time"
 )
 
@@ -20,9 +22,11 @@ type Resource struct {
 	DownloadURL string
 }
 
-// resourceLinkPattern matches the dataset page's resource list rows, e.g.
-// `<a href="/en/resource/4304">Δημόσιες Συμβάσεις που Κατακυρώθηκαν 2025</a>`.
-var resourceLinkPattern = regexp.MustCompile(`<a href="(/en/resource/\d+)">([^<]*)</a>`)
+// resourceLinkPattern matches resource links even if the portal adds extra
+// attributes or wraps the visible title in small bits of markup.
+var resourceLinkPattern = regexp.MustCompile(`(?is)<a\b[^>]*\bhref=["'](/en/resource/\d+)["'][^>]*>(.*?)</a>`)
+
+var htmlTagPattern = regexp.MustCompile(`(?is)<[^>]+>`)
 
 // yearPattern filters resourceLinkPattern matches down to actual periodic
 // data files (their titles always contain a year), excluding unrelated
@@ -38,7 +42,7 @@ func DiscoverResources(baseURL, datasetURL string) ([]Resource, error) {
 	if err != nil {
 		return nil, fmt.Errorf("build request: %w", err)
 	}
-	req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; PromitheiesCyBot/1.0)")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; SymvasisCyBot/1.0)")
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -58,7 +62,7 @@ func DiscoverResources(baseURL, datasetURL string) ([]Resource, error) {
 	var resources []Resource
 	seen := map[string]bool{}
 	for _, m := range resourceLinkPattern.FindAllStringSubmatch(string(body), -1) {
-		path, title := m[1], m[2]
+		path, title := m[1], cleanLinkText(m[2])
 		if !yearPattern.MatchString(title) || seen[path] {
 			continue
 		}
@@ -74,4 +78,10 @@ func DiscoverResources(baseURL, datasetURL string) ([]Resource, error) {
 		return nil, fmt.Errorf("no dataset resources found at %s — page structure may have changed", datasetURL)
 	}
 	return resources, nil
+}
+
+func cleanLinkText(s string) string {
+	s = htmlTagPattern.ReplaceAllString(s, " ")
+	s = html.UnescapeString(s)
+	return strings.Join(strings.Fields(s), " ")
 }
