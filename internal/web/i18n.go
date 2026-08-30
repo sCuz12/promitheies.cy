@@ -118,6 +118,7 @@ var strings_ = map[string]map[Lang]string{
 	"nav.contractors":  {LangEL: "Ανάδοχοι", LangEN: "Contractors"},
 	"nav.open_tenders": {LangEL: "Διαγωνισμοί", LangEN: "Open tenders"},
 	"nav.search":       {LangEL: "Αναζήτηση", LangEN: "Search"},
+	"nav.toggle":       {LangEL: "Μενού", LangEN: "Menu"},
 
 	// language switch
 	"lang.label.el": {LangEL: "ΕΛ", LangEN: "ΕΛ"},

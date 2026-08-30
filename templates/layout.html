@@ -35,7 +35,12 @@
 <body>
 <header class="site-header">
   <a class="brand" href="/">{{template "island-mark" "brand-mark"}}Symvaseis<span class="cy">.cy</span></a>
-  <div class="header-right">
+  <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="headerNav" aria-label="{{.T "nav.toggle"}}">
+    <span class="nav-toggle-bar"></span>
+    <span class="nav-toggle-bar"></span>
+    <span class="nav-toggle-bar"></span>
+  </button>
+  <div class="header-right" id="headerNav">
     <nav>
       <a href="/authorities">{{.T "nav.authorities"}}</a>
       <a href="/contractors">{{.T "nav.contractors"}}</a>
@@ -48,6 +53,26 @@
     </div>
   </div>
 </header>
+<script>
+(function () {
+  var toggle = document.getElementById("navToggle");
+  var panel = document.getElementById("headerNav");
+  if (!toggle || !panel) return;
+  toggle.addEventListener("click", function () {
+    var open = panel.classList.toggle("is-open");
+    toggle.classList.toggle("is-open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && panel.classList.contains("is-open")) {
+      panel.classList.remove("is-open");
+      toggle.classList.remove("is-open");
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.focus();
+    }
+  });
+})();
+</script>
 <main>
 {{block "content" .}}{{end}}
 </main>
