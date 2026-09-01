@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/georgehadjisavvas/promitheies-cy/internal/alerts"
 	"github.com/georgehadjisavvas/promitheies-cy/internal/cpv"
 	"github.com/georgehadjisavvas/promitheies-cy/internal/entities"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -18,10 +19,11 @@ const Source = "ted"
 const CyprusQuery = "place-of-performance=CYP"
 
 type Stats struct {
-	Processed int
-	Inserted  int
-	Updated   int
-	Skipped   int
+	Processed  int
+	Inserted   int
+	Updated    int
+	Skipped    int
+	NewTenders []alerts.Tender
 }
 
 // Import upserts every notice into tenders, keyed on the source's
@@ -49,6 +51,7 @@ func Import(ctx context.Context, pool *pgxpool.Pool, notices []Notice) (Stats, e
 			cpvDivision = &div
 		}
 
+		var tenderID int64
 		var inserted bool
 		err = pool.QueryRow(ctx, `
 			INSERT INTO tenders (
@@ -72,16 +75,28 @@ func Import(ctx context.Context, pool *pgxpool.Pool, notices []Notice) (Stats, e
 				published_at = EXCLUDED.published_at,
 				raw_payload = EXCLUDED.raw_payload,
 				updated_at = now()
-			RETURNING (xmax = 0)
+			RETURNING id, (xmax = 0)
 		`,
 			n.PublicationNumber, nullableStr(n.TitleEN), nullableStr(n.TitleEL), authorityID, primaryCPV, cpvDivision,
 			n.EstimatedValue, n.Currency, n.Status, nullableStr(n.ProcedureType), Source, n.PublishedAt, n.Raw,
-		).Scan(&inserted)
+		).Scan(&tenderID, &inserted)
 		if err != nil {
 			return stats, fmt.Errorf("upsert tender for %s: %w", n.PublicationNumber, err)
 		}
 		if inserted {
 			stats.Inserted++
+			if n.Status == "open" {
+				stats.NewTenders = append(stats.NewTenders, alerts.Tender{
+					ID:                tenderID,
+					Title:             firstNonEmpty(n.TitleEL, n.TitleEN),
+					AuthorityName:     n.AuthorityName,
+					Source:            Source,
+					ExternalID:        n.PublicationNumber,
+					CPVDivision:       cpvDivision,
+					EstimatedValueEUR: n.EstimatedValue,
+					PublishedAt:       n.PublishedAt,
+				})
+			}
 		} else {
 			stats.Updated++
 		}
@@ -95,4 +110,13 @@ func nullableStr(s string) *string {
 		return nil
 	}
 	return &s
+}
+
+func firstNonEmpty(values ...string) string {
+	for _, v := range values {
+		if v != "" {
+			return v
+		}
+	}
+	return ""
 }

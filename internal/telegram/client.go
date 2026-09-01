@@ -13,8 +13,7 @@ import (
 )
 
 // Client posts messages to a single, pre-configured Telegram chat via a bot
-// token. Create one bot with @BotFather, add it to the target group, and use
-// the group's chat ID (a negative number for groups/supergroups).
+// token
 type Client struct {
 	baseURL string // overridable in tests; defaults to the real Bot API
 	token   string

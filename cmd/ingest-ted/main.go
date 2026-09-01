@@ -7,10 +7,13 @@ import (
 	"context"
 	"log"
 	"os"
+	"strconv"
 	"time"
 
+	"github.com/georgehadjisavvas/promitheies-cy/internal/alerts"
 	"github.com/georgehadjisavvas/promitheies-cy/internal/db"
 	"github.com/georgehadjisavvas/promitheies-cy/internal/ted"
+	"github.com/georgehadjisavvas/promitheies-cy/internal/telegram"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -33,6 +36,9 @@ func main() {
 	defer pool.Close()
 
 	client := ted.NewClient(baseURL)
+	telegramClient := newTelegramClientFromEnv()
+	telegramMaxMessages := envInt("TELEGRAM_MAX_NEW_TENDER_MESSAGES", 20)
+	publicBaseURL := os.Getenv("PUBLIC_BASE_URL")
 
 	runID, err := startIngestRun(ctx, pool, ted.Source)
 	if err != nil {
@@ -40,6 +46,7 @@ func main() {
 	}
 
 	var totalProcessed, totalInserted, totalUpdated, totalSkipped int
+	var newTenders []alerts.Tender
 	page := 1
 	for {
 		resp, err := client.Search(ctx, ted.CyprusQuery, ted.Fields, page, ted.MaxPageLimit)
@@ -71,6 +78,7 @@ func main() {
 		totalInserted += stats.Inserted
 		totalUpdated += stats.Updated
 		totalSkipped += stats.Skipped
+		newTenders = append(newTenders, stats.NewTenders...)
 
 		log.Printf("page %d/%d: processed=%d inserted=%d updated=%d skipped=%d (total so far: %d)",
 			page, (resp.TotalNoticeCount+ted.MaxPageLimit-1)/ted.MaxPageLimit,
@@ -83,8 +91,36 @@ func main() {
 	}
 
 	finishIngestRun(ctx, pool, runID, totalProcessed, totalInserted, "success", "")
+	if telegramClient != nil && len(newTenders) > 0 {
+		if err := alerts.SendNewTenderMessages(ctx, telegramClient, newTenders, telegramMaxMessages, publicBaseURL); err != nil {
+			log.Printf("warning: failed to send telegram new-tender notifications: %v", err)
+		} else {
+			log.Printf("sent telegram notifications for %d new open tenders", len(newTenders))
+		}
+	}
 	log.Printf("done: processed=%d inserted=%d updated=%d skipped=%d",
 		totalProcessed, totalInserted, totalUpdated, totalSkipped)
+}
+
+func newTelegramClientFromEnv() *telegram.Client {
+	token := os.Getenv("TELEGRAM_BOT_TOKEN")
+	chatID := os.Getenv("TELEGRAM_CHAT_ID")
+	if token == "" || chatID == "" {
+		return nil
+	}
+	return telegram.NewClient(token, chatID)
+}
+
+func envInt(name string, fallback int) int {
+	raw := os.Getenv(name)
+	if raw == "" {
+		return fallback
+	}
+	value, err := strconv.Atoi(raw)
+	if err != nil || value < 0 {
+		return fallback
+	}
+	return value
 }
 
 func startIngestRun(ctx context.Context, pool *pgxpool.Pool, source string) (int64, error) {

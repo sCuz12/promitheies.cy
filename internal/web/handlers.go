@@ -3,6 +3,7 @@ package web
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/georgehadjisavvas/promitheies-cy/internal/cpv"
 )
@@ -52,6 +53,21 @@ func (s *Server) handleContractor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s.render(w, r, "contractor", c)
+}
+
+func (s *Server) handleTender(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil || id <= 0 {
+		http.NotFound(w, r)
+		return
+	}
+
+	tender, err := GetTender(r.Context(), s.pool, id)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	s.render(w, r, "tender", tender)
 }
 
 func (s *Server) handleOpenTenders(w http.ResponseWriter, r *http.Request) {

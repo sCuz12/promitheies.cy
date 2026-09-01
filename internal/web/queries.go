@@ -297,6 +297,46 @@ func GetContractor(ctx context.Context, pool *pgxpool.Pool, slug string) (*Contr
 	return &c, nil
 }
 
+type Tender struct {
+	ID            int64
+	Title         string
+	AuthoritySlug string
+	AuthorityName string
+	CPVDivision   *string
+	EstimatedVal  *float64
+	Status        string
+	ProcedureType *string
+	PublishedAt   *string
+	Deadline      *string
+	Source        string
+	ExternalID    *string
+}
+
+func GetTender(ctx context.Context, pool *pgxpool.Pool, id int64) (*Tender, error) {
+	var t Tender
+	err := pool.QueryRow(ctx, `
+		SELECT t.id, coalesce(t.title_el, t.title_en, ''), auth.slug, coalesce(auth.canonical_name_el, auth.canonical_name_en, ''),
+		       t.cpv_division, t.estimated_value, t.status, t.procedure_type, to_char(t.published_at, 'YYYY-MM-DD'),
+		       to_char(t.deadline, 'YYYY-MM-DD'), t.source,
+		       CASE
+		         WHEN t.external_ids ? 'ted' THEN t.external_ids->>'ted'
+		         WHEN t.external_ids ? 'cftid' THEN t.external_ids->>'cftid'
+		         ELSE NULL
+		       END
+		FROM tenders t
+		JOIN authorities auth ON auth.id = t.authority_id
+		WHERE t.id = $1
+	`, id).Scan(
+		&t.ID, &t.Title, &t.AuthoritySlug, &t.AuthorityName,
+		&t.CPVDivision, &t.EstimatedVal, &t.Status, &t.ProcedureType,
+		&t.PublishedAt, &t.Deadline, &t.Source, &t.ExternalID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &t, nil
+}
+
 type SearchResult struct {
 	Query   string
 	Tenders []TenderRow

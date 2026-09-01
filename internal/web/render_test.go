@@ -43,17 +43,21 @@ func fakePages() map[string]any {
 			Authorities:   []EntitySummary{entity},
 			RecentAwards:  []AwardRow{award},
 		},
+		"tender": &Tender{
+			ID: 99, Title: "Προμήθεια φαρμάκων", AuthoritySlug: "dimos-lemesou", AuthorityName: "Δήμος Λεμεσού",
+			CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date, Source: "ted",
+		},
 		"open_tenders": OpenTendersPageData{
 			Query: "φάρμακα", CPVDivision: cpvDiv, Divisions: cpv.Divisions, LastUpdated: &date,
 			Results: []TenderRow{{
-				Title: "Προμήθεια φαρμάκων", AuthoritySlug: "dimos-lemesou", AuthorityName: "Δήμος Λεμεσού",
+				ID: 99, Title: "Προμήθεια φαρμάκων", AuthoritySlug: "dimos-lemesou", AuthorityName: "Δήμος Λεμεσού",
 				CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date, Source: "ted",
 			}},
 		},
 		"search": searchPageData{
 			Query: "ασφαλτόστρωση", CPVDivision: cpvDiv, Divisions: cpv.Divisions,
 			Results: []TenderRow{{
-				Title: "Ασφαλτόστρωση δρόμου", AuthoritySlug: "dimos-lemesou", AuthorityName: "Δήμος Λεμεσού",
+				ID: 100, Title: "Ασφαλτόστρωση δρόμου", AuthoritySlug: "dimos-lemesou", AuthorityName: "Δήμος Λεμεσού",
 				CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date,
 			}},
 		},
