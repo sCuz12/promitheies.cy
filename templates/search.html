@@ -29,7 +29,7 @@
   {{range .Data.Results}}
     <tr>
       <td class="nowrap">{{if .PublishedAt}}{{.PublishedAt}}{{else}}—{{end}}</td>
-      <td>{{.Title}}</td>
+      <td><a href="/tender/{{.ID}}">{{.Title}}</a></td>
       <td><a href="/authority/{{.AuthoritySlug}}">{{.AuthorityName}}</a></td>
       <td>{{if .CPVDivision}}{{cpvName $p.Lang .CPVDivision}}{{else}}—{{end}}</td>
       <td><span class="badge badge-{{.Status}}" title="{{$p.Tip (printf "status.%s" .Status)}}">{{$p.T (printf "status.%s" .Status)}}</span></td>

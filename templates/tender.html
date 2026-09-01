@@ -1,0 +1,40 @@
+{{define "title"}}{{.Data.Title}}{{end}}
+{{define "content"}}
+<p class="breadcrumb"><a href="/diagonismoi">{{.T "breadcrumb.open_tenders"}}</a> / {{.Data.ID}}</p>
+<h1>{{.Data.Title}}</h1>
+
+<div class="table-scroll">
+<table class="data-table">
+  <tbody>
+    <tr>
+      <th>{{.T "th.authority"}}</th>
+      <td><a href="/authority/{{.Data.AuthoritySlug}}">{{.Data.AuthorityName}}</a></td>
+    </tr>
+    <tr>
+      <th>{{.T "th.status"}}</th>
+      <td><span class="badge badge-{{.Data.Status}}" title="{{.Tip (printf "status.%s" .Data.Status)}}">{{.T (printf "status.%s" .Data.Status)}}</span></td>
+    </tr>
+    <tr>
+      <th>{{.T "th.sector"}}</th>
+      <td>{{if .Data.CPVDivision}}{{cpvName .Lang .Data.CPVDivision}}{{else}}—{{end}}</td>
+    </tr>
+    <tr>
+      <th>{{.T "th.estvalue"}}</th>
+      <td>{{if .Data.EstimatedVal}}€{{.Data.EstimatedVal | euro}}{{else}}—{{end}}</td>
+    </tr>
+    <tr>
+      <th>{{.T "th.published"}}</th>
+      <td>{{if .Data.PublishedAt}}{{.Data.PublishedAt}}{{else}}—{{end}}</td>
+    </tr>
+    <tr>
+      <th>{{.T "th.deadline"}}</th>
+      <td>{{if .Data.Deadline}}{{.Data.Deadline}}{{else}}—{{end}}</td>
+    </tr>
+    <tr>
+      <th>{{.T "th.source"}}</th>
+      <td><span class="source-chip">{{.Data.Source}}</span>{{if .Data.ExternalID}} <code>{{.Data.ExternalID}}</code>{{end}}</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+{{end}}
