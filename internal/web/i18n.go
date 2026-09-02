@@ -146,9 +146,13 @@ var strings_ = map[string]map[Lang]string{
 	"breadcrumb.search":       {LangEL: "Αναζήτηση", LangEN: "Search"},
 
 	// home hero
-	"home.eyebrow":   {LangEL: "Δημόσιο μητρώο · data.gov.cy + TED", LangEN: "Public register · data.gov.cy + TED"},
-	"home.h1":        {LangEL: "Οι δημόσιες συμβάσεις της Κύπρου, σε ένα σημείο", LangEN: "Cyprus public procurement, in one place"},
-	"home.sub":       {LangEL: "Κάθε διαγωνισμός, ανάθεση και ανάδοχος που δημοσιοποιεί το κράτος. τεκμηριωμένα και δωρεάν.", LangEN: "Every tender, award and contractor the state discloses. searchable, sourced, and free."},
+	"home.eyebrow": {LangEL: "Δημόσιο μητρώο · data.gov.cy + TED", LangEN: "Public register · data.gov.cy + TED"},
+	"home.h1":      {LangEL: "Οι δημόσιες συμβάσεις της Κύπρου, σε ένα σημείο", LangEN: "Cyprus public procurement, in one place"},
+	"home.sub":     {LangEL: "Κάθε διαγωνισμός, ανάθεση και ανάδοχος που δημοσιοποιεί το κράτος. τεκμηριωμένα και δωρεάν.", LangEN: "Every tender, award and contractor the state discloses. searchable, sourced, and free."},
+	"home.telegram_cta": {
+		LangEL: "Λάβετε alerts στο Telegram",
+		LangEN: "Get alerts on Telegram",
+	},
 	"stat.tenders":   {LangEL: "διαγωνισμοί", LangEN: "tenders tracked"},
 	"stat.awards":    {LangEL: "αναθέσεις", LangEN: "awards recorded"},
 	"stat.value":     {LangEL: "συνολική αξία αναθέσεων", LangEN: "total awarded value"},

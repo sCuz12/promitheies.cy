@@ -1,7 +1,7 @@
 include .env
 export
 
-.PHONY: up down migrate-up migrate-down build run test seed ingest-ted ingest-datagovcy
+.PHONY: up down migrate-up migrate-down build run test seed ingest-ted ingest-datagovcy distribute
 
 up:
 	docker compose up -d
@@ -22,6 +22,7 @@ build:
 	go build -o bin/ingest-ted ./cmd/ingest-ted
 	go build -o bin/ingest-datagovcy ./cmd/ingest-datagovcy
 	go build -o bin/ingest-opentender ./cmd/ingest-opentender
+	go build -o bin/distribute ./cmd/distribute
 	go build -o bin/jobs ./cmd/jobs
 
 run:
@@ -38,3 +39,6 @@ ingest-ted:
 
 ingest-datagovcy:
 	go run ./cmd/ingest-datagovcy
+
+distribute:
+	go run ./cmd/distribute

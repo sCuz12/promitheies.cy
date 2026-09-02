@@ -6,6 +6,14 @@
   <span class="eyebrow">{{.T "home.eyebrow"}}</span>
   <h1>{{.T "home.h1"}}</h1>
   <p class="hero-sub">{{.T "home.sub"}}</p>
+  <div class="hero-actions">
+    <a class="hero-cta" href="https://t.me/+ODbbmjPnnDhiNmY8" target="_blank" rel="noopener">
+      <svg class="hero-cta-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21.8 4.6 18.5 20c-.2 1-1 1.2-1.8.7l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.2 9.4-8.5c.4-.4-.1-.6-.6-.3L5.8 13.1.8 11.5c-1.1-.4-1.1-1.1.2-1.6L20.4 2.4c.9-.3 1.7.2 1.4 2.2Z"/>
+      </svg>
+      <span>{{.T "home.telegram_cta"}}</span>
+    </a>
+  </div>
   <div class="stat-row">
     <div class="stat-tile">
       <span class="stat-value">{{.Data.TotalTenders | commas}}</span>

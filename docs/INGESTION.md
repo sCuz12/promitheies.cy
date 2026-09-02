@@ -117,6 +117,11 @@ JSON) — used instead, since it avoids XML/eForms parsing entirely.
    `result`/`dir-awa-pre`/`can-standard` → `awarded`).
 3. **Resolve + upsert** — same authority resolution and idempotent-upsert pattern as data.gov.cy,
    keyed on `external_ids->>'ted'` = the notice's `publication-number`.
+4. **Telegram notifications** — when the TED command inserts new `open` notices and
+   `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` are set, it sends those new tenders to the configured
+   Telegram group. `PUBLIC_BASE_URL` is optional and adds a `/tender/{id}` link to each
+   message. `TELEGRAM_MAX_NEW_TENDER_MESSAGES` defaults to `20` to avoid flooding a group on a
+   large first import; any extra notices are summarized in one final message.
 
 **Known limitation:** the search API's flat field projection does **not** reliably expose award
 winner name or award value, even on `result`-type (award) notices — verified against live data
