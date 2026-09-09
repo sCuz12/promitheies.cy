@@ -10,10 +10,15 @@ import (
 	"os"
 
 	"github.com/georgehadjisavvas/promitheies-cy/internal/db"
+	"github.com/georgehadjisavvas/promitheies-cy/internal/envconfig"
 	"github.com/georgehadjisavvas/promitheies-cy/internal/web"
 )
 
 func main() {
+	if err := envconfig.Load(); err != nil {
+		log.Fatalf("load .env: %v", err)
+	}
+
 	ctx := context.Background()
 
 	dbURL := os.Getenv("DATABASE_URL")

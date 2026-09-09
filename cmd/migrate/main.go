@@ -7,12 +7,17 @@ import (
 	"log"
 	"os"
 
+	"github.com/georgehadjisavvas/promitheies-cy/internal/envconfig"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 func main() {
+	if err := envconfig.Load(); err != nil {
+		log.Fatalf("load .env: %v", err)
+	}
+
 	direction := flag.String("direction", "up", "up or down")
 	steps := flag.Int("steps", 0, "number of steps (0 = all)")
 	flag.Parse()

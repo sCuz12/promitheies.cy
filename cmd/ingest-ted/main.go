@@ -12,12 +12,17 @@ import (
 
 	"github.com/georgehadjisavvas/promitheies-cy/internal/alerts"
 	"github.com/georgehadjisavvas/promitheies-cy/internal/db"
+	"github.com/georgehadjisavvas/promitheies-cy/internal/envconfig"
 	"github.com/georgehadjisavvas/promitheies-cy/internal/ted"
 	"github.com/georgehadjisavvas/promitheies-cy/internal/telegram"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func main() {
+	if err := envconfig.Load(); err != nil {
+		log.Fatalf("load .env: %v", err)
+	}
+
 	ctx := context.Background()
 
 	dbURL := os.Getenv("DATABASE_URL")

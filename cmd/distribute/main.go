@@ -13,19 +13,24 @@ import (
 
 	"github.com/georgehadjisavvas/promitheies-cy/internal/db"
 	"github.com/georgehadjisavvas/promitheies-cy/internal/distribution"
+	"github.com/georgehadjisavvas/promitheies-cy/internal/envconfig"
 )
 
 func main() {
+	if err := envconfig.Load(); err != nil {
+		log.Fatalf("load .env: %v", err)
+	}
+
 	var (
 		cadence  = flag.String("cadence", distribution.CadenceDaily, "distribution cadence: daily or weekly")
-		platform = flag.String("platform", distribution.PlatformX, "distribution platform: x")
+		platform = flag.String("platform", distribution.PlatformX, "distribution platform: x or reddit")
 		date     = flag.String("date", "", "selected date in YYYY-MM-DD format; defaults to today")
-		limit    = flag.Int("limit", 20, "maximum TED tenders to include in the LLM prompt")
+		limit    = flag.Int("limit", distribution.DefaultTenderLimit, "maximum latest TED tenders to include in the LLM prompt")
 	)
 	flag.Parse()
 
-	if *platform != distribution.PlatformX {
-		log.Fatalf("unsupported platform %q; only x is supported", *platform)
+	if !distribution.SupportedPlatform(*platform) {
+		log.Fatalf("unsupported platform %q; supported platforms: x, reddit", *platform)
 	}
 
 	ctx := context.Background()
@@ -63,7 +68,7 @@ func main() {
 	}
 
 	llm := distribution.NewOpenAIClient(os.Getenv("OPENAI_API_KEY"), openAIModel())
-	posts, err := distribution.GenerateDraft(ctx, llm, req)
+	post, err := distribution.GenerateDraft(ctx, llm, req)
 	if err != nil {
 		log.Fatalf("generate draft: %v", err)
 	}
@@ -75,14 +80,11 @@ func main() {
 	if err := os.MkdirAll(filepath.Dir(filename), 0o755); err != nil {
 		log.Fatalf("create posts directory: %v", err)
 	}
-	if err := os.WriteFile(filename, []byte(distribution.MarkdownDraft(req, posts)), 0o644); err != nil {
+	if err := os.WriteFile(filename, []byte(distribution.MarkdownDraft(req, post)), 0o644); err != nil {
 		log.Fatalf("write draft: %v", err)
 	}
 
-	fmt.Printf("wrote %s\n\n", filename)
-	for i, post := range posts {
-		fmt.Printf("Option %d:\n%s\n\n", i+1, post)
-	}
+	fmt.Printf("wrote %s\n\n%s\n", filename, post)
 }
 
 func selectedDate(raw string, loc *time.Location) (time.Time, error) {

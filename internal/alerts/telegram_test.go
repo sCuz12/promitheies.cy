@@ -21,7 +21,7 @@ func TestFormatNewTenderMessageEscapesHTMLAndAddsLink(t *testing.T) {
 		EstimatedValueEUR: &value,
 		PublishedAt:       &published,
 		ID:                42,
-	}, "https://promitheies.cy/")
+	}, "https://symvaseis.cy/")
 
 	assertContains(t, msg, "<b>New open tender</b>")
 	assertContains(t, msg, "Works &amp; &lt;services&gt;")
@@ -30,7 +30,7 @@ func TestFormatNewTenderMessageEscapesHTMLAndAddsLink(t *testing.T) {
 	assertContains(t, msg, "Published: 2026-08-31")
 	assertContains(t, msg, "CPV division: 45000000")
 	assertContains(t, msg, "Source: TED <code>123</code>")
-	assertContains(t, msg, "https://promitheies.cy/tender/42")
+	assertContains(t, msg, "https://symvaseis.cy/tender/42")
 }
 
 func TestSendNewTenderMessagesCapsAndSummarizes(t *testing.T) {
@@ -41,7 +41,7 @@ func TestSendNewTenderMessagesCapsAndSummarizes(t *testing.T) {
 		{ID: 3, Title: "Three"},
 	}
 
-	err := SendNewTenderMessages(context.Background(), sender, tenders, 2, "https://promitheies.cy")
+	err := SendNewTenderMessages(context.Background(), sender, tenders, 2, "https://symvaseis.cy")
 	if err != nil {
 		t.Fatalf("SendNewTenderMessages returned error: %v", err)
 	}

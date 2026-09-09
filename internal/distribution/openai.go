@@ -38,13 +38,21 @@ type responseRequest struct {
 
 type responseBody struct {
 	OutputText string `json:"output_text"`
+	Status     string `json:"status"`
 	Output     []struct {
+		Type    string `json:"type"`
+		Status  string `json:"status"`
+		Role    string `json:"role"`
 		Content []struct {
 			Type string `json:"type"`
 			Text string `json:"text"`
 		} `json:"content"`
 	} `json:"output"`
+	IncompleteDetails *struct {
+		Reason string `json:"reason"`
+	} `json:"incomplete_details"`
 	Error *struct {
+		Code    string `json:"code"`
 		Message string `json:"message"`
 	} `json:"error"`
 }
@@ -59,10 +67,10 @@ func (c *OpenAIClient) GeneratePost(ctx context.Context, prompt string) (string,
 
 	body, err := json.Marshal(responseRequest{
 		Model:           c.model,
-		Instructions:    "You write factual, awareness-focused social posts for Promitheies.cy. Return only the requested numbered post options.",
+		Instructions:    "You write factual, Greek-first, awareness-focused social posts for Symvaseis.CY. Return only the requested final post text.",
 		Input:           prompt,
-		MaxOutputTokens: 320,
-		Store:           false,
+		MaxOutputTokens: 2000,
+		Store:           true,
 	})
 	if err != nil {
 		return "", fmt.Errorf("marshal OpenAI request: %w", err)
@@ -96,15 +104,30 @@ func (c *OpenAIClient) GeneratePost(ctx context.Context, prompt string) (string,
 	if out.Error != nil && out.Error.Message != "" {
 		return "", errors.New(out.Error.Message)
 	}
-	if out.OutputText != "" {
-		return out.OutputText, nil
+	text := outputText(out)
+	if text != "" {
+		return text, nil
 	}
+	if out.Status == "incomplete" && out.IncompleteDetails != nil && out.IncompleteDetails.Reason != "" {
+		return "", fmt.Errorf("OpenAI response incomplete: %s", out.IncompleteDetails.Reason)
+	}
+	if out.Status != "" {
+		return "", fmt.Errorf("OpenAI response did not include text; status=%s", out.Status)
+	}
+	return "", errors.New("OpenAI response did not include text")
+}
+
+func outputText(out responseBody) string {
+	text := strings.TrimSpace(out.OutputText)
 	for _, item := range out.Output {
 		for _, content := range item.Content {
-			if content.Text != "" {
-				return content.Text, nil
+			if content.Type == "output_text" && strings.TrimSpace(content.Text) != "" {
+				if text != "" {
+					text += "\n"
+				}
+				text += strings.TrimSpace(content.Text)
 			}
 		}
 	}
-	return "", errors.New("OpenAI response did not include text")
+	return text
 }

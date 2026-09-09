@@ -4,24 +4,25 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"regexp"
 	"sort"
 	"strings"
 	"time"
 	"unicode/utf8"
 
+	"github.com/georgehadjisavvas/promitheies-cy/internal/cpv"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 const (
-	PlatformX = "x"
+	PlatformX      = "x"
+	PlatformReddit = "reddit"
 
 	CadenceDaily  = "daily"
 	CadenceWeekly = "weekly"
 
-	MaxXChars = 280
-
-	DefaultOptionCount = 3
+	MaxXChars          = 280
+	MaxRedditChars     = 10_000
+	DefaultTenderLimit = 3
 )
 
 type Tender struct {
@@ -30,6 +31,7 @@ type Tender struct {
 	AuthorityName     string
 	ExternalID        string
 	CPVDivision       *string
+	CPVCategoryName   *string
 	EstimatedValueEUR *float64
 	PublishedAt       *time.Time
 	Deadline          *time.Time
@@ -58,8 +60,8 @@ func WindowFor(selected time.Time, cadence string) (Window, error) {
 	case CadenceDaily:
 		return Window{Start: day, End: day.AddDate(0, 0, 1)}, nil
 	case CadenceWeekly:
-		offset := (int(day.Weekday()) + 6) % 7
-		start := day.AddDate(0, 0, -offset)
+		// offset := (int(day.Weekday()) + 6) % 7
+		start := day.AddDate(0, 0, -6)
 		return Window{Start: start, End: start.AddDate(0, 0, 7)}, nil
 	default:
 		return Window{}, fmt.Errorf("unsupported cadence %q", cadence)
@@ -68,7 +70,7 @@ func WindowFor(selected time.Time, cadence string) (Window, error) {
 
 func LoadNewTEDTenders(ctx context.Context, pool *pgxpool.Pool, w Window, limit int) ([]Tender, error) {
 	if limit <= 0 {
-		limit = 20
+		limit = DefaultTenderLimit
 	}
 	rows, err := pool.Query(ctx, `
 		SELECT
@@ -77,17 +79,19 @@ func LoadNewTEDTenders(ctx context.Context, pool *pgxpool.Pool, w Window, limit 
 			coalesce(auth.canonical_name_el, auth.canonical_name_en, ''),
 			t.external_ids->>'ted',
 			t.cpv_division,
+			coalesce(cpv.description_el, cpv.description_en, ''),
 			t.estimated_value,
 			t.published_at,
 			t.deadline
 		FROM tenders t
 		JOIN authorities auth ON auth.id = t.authority_id
+		LEFT JOIN cpv_categories cpv ON cpv.code = t.cpv_division
 		WHERE t.source = 'ted'
 		  AND t.status = 'open'
 		  AND (t.deadline IS NULL OR t.deadline >= CURRENT_DATE)
 		  AND t.created_at >= $1
 		  AND t.created_at < $2
-		ORDER BY t.estimated_value DESC NULLS LAST, t.deadline ASC NULLS LAST, t.id DESC
+		ORDER BY t.created_at DESC, t.estimated_value DESC NULLS LAST, t.deadline ASC NULLS LAST, t.id DESC
 		LIMIT $3
 	`, w.Start, w.End, limit)
 	if err != nil {
@@ -104,6 +108,7 @@ func LoadNewTEDTenders(ctx context.Context, pool *pgxpool.Pool, w Window, limit 
 			&t.AuthorityName,
 			&t.ExternalID,
 			&t.CPVDivision,
+			&t.CPVCategoryName,
 			&t.EstimatedValueEUR,
 			&t.PublishedAt,
 			&t.Deadline,
@@ -115,35 +120,61 @@ func LoadNewTEDTenders(ctx context.Context, pool *pgxpool.Pool, w Window, limit 
 	return tenders, rows.Err()
 }
 
-func GenerateDraft(ctx context.Context, llm LLMClient, req DraftRequest) ([]string, error) {
-	if req.Platform != PlatformX {
-		return nil, fmt.Errorf("unsupported platform %q", req.Platform)
+func GenerateDraft(ctx context.Context, llm LLMClient, req DraftRequest) (string, error) {
+	if !SupportedPlatform(req.Platform) {
+		return "", fmt.Errorf("unsupported platform %q", req.Platform)
 	}
 	if len(req.Tenders) == 0 {
 		post := NoNewTendersPost(req)
-		if err := ValidateXPost(post); err != nil {
-			return nil, err
+		if err := ValidatePost(req.Platform, post); err != nil {
+			return "", err
 		}
-		return []string{post}, nil
+		return post, nil
 	}
 	if llm == nil {
-		return nil, errors.New("llm client is required")
+		return "", errors.New("llm client is required")
 	}
 
 	raw, err := llm.GeneratePost(ctx, BuildPrompt(req))
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	posts, err := ParsePostOptions(raw)
-	if err != nil {
-		return nil, err
+	post := CleanPost(raw)
+	if err := ValidatePost(req.Platform, post); err != nil {
+		return "", err
 	}
-	return posts, nil
+	return post, nil
 }
 
 func NoNewTendersPost(req DraftRequest) string {
-	return fmt.Sprintf("No new open TED tenders for Cyprus found by Promitheies for %s. View current opportunities: %s",
+	if req.Platform == PlatformReddit {
+		return fmt.Sprintf("## Cyprus public tender update — %s\n\nNo new open TED tenders for Cyprus were retrieved for this period. You can still browse currently open opportunities on Symvaseis.CY: %s",
+			DateRangeLabel(req.Window), OpenTendersURL(req.PublicBaseURL))
+	}
+	return fmt.Sprintf("Δεν εντοπίστηκαν νέοι ανοικτοί διαγωνισμοί TED για την Κύπρο από το Symvaseis.CY για %s. Δείτε τους διαθέσιμους: %s",
 		DateRangeLabel(req.Window), OpenTendersURL(req.PublicBaseURL))
+}
+
+func SupportedPlatform(platform string) bool {
+	return platform == PlatformX || platform == PlatformReddit
+}
+
+func ValidatePost(platform, post string) error {
+	switch platform {
+	case PlatformX:
+		return ValidateXPost(post)
+	case PlatformReddit:
+		post = strings.TrimSpace(post)
+		if post == "" {
+			return errors.New("Reddit post is empty")
+		}
+		if n := utf8.RuneCountInString(post); n > MaxRedditChars {
+			return fmt.Errorf("Reddit post is %d characters; max is %d", n, MaxRedditChars)
+		}
+		return nil
+	default:
+		return fmt.Errorf("unsupported platform %q", platform)
+	}
 }
 
 func ValidateXPost(post string) error {
@@ -167,51 +198,16 @@ func CleanPost(post string) string {
 	return strings.TrimSpace(post)
 }
 
-func ParsePostOptions(raw string) ([]string, error) {
-	raw = strings.TrimSpace(raw)
-	if raw == "" {
-		return nil, errors.New("post options are empty")
-	}
-
-	lines := strings.Split(raw, "\n")
-	var posts []string
-	re := regexp.MustCompile(`^\s*(?:option\s*)?\d+[\).\:-]\s*`)
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		if line == "" {
-			continue
-		}
-		line = strings.TrimPrefix(line, "- ")
-		line = strings.TrimPrefix(line, "* ")
-		line = re.ReplaceAllString(line, "")
-		line = CleanPost(line)
-		if line == "" {
-			continue
-		}
-		if err := ValidateXPost(line); err != nil {
-			return nil, err
-		}
-		posts = append(posts, line)
-	}
-	if len(posts) != DefaultOptionCount {
-		return nil, fmt.Errorf("expected %d post options, got %d", DefaultOptionCount, len(posts))
-	}
-	return posts, nil
-}
-
-func MarkdownDraft(req DraftRequest, posts []string) string {
+func MarkdownDraft(req DraftRequest, post string) string {
 	var b strings.Builder
-	fmt.Fprintf(&b, "# Promitheies X %s draft\n\n", req.Cadence)
+	fmt.Fprintf(&b, "# Symvaseis.CY %s %s draft\n\n", platformLabel(req.Platform), req.Cadence)
 	fmt.Fprintf(&b, "Date range: %s\n", DateRangeLabel(req.Window))
-	fmt.Fprintf(&b, "Platform: X\n")
+	fmt.Fprintf(&b, "Platform: %s\n", platformLabel(req.Platform))
 	fmt.Fprintf(&b, "Source: TED\n\n")
-	b.WriteString("## Copy options\n\n")
-	for i, post := range posts {
-		fmt.Fprintf(&b, "### Option %d\n\n", i+1)
-		b.WriteString("```text\n")
-		b.WriteString(strings.TrimSpace(post))
-		b.WriteString("\n```\n\n")
-	}
+	b.WriteString("## Copy post\n\n")
+	b.WriteString("```text\n")
+	b.WriteString(strings.TrimSpace(post))
+	b.WriteString("\n```\n\n")
 	b.WriteString("## Source tenders\n\n")
 	if len(req.Tenders) == 0 {
 		b.WriteString("- No new open TED tenders found.\n")
@@ -228,13 +224,16 @@ func MarkdownDraft(req DraftRequest, posts []string) string {
 		if t.AuthorityName != "" {
 			fmt.Fprintf(&b, " - %s", t.AuthorityName)
 		}
+		if category := t.CategoryName(); category != "" {
+			fmt.Fprintf(&b, " (%s)", category)
+		}
 		b.WriteString("\n")
 	}
 	return b.String()
 }
 
 func OutputFilename(platform, cadence string, w Window) (string, error) {
-	if platform != PlatformX {
+	if !SupportedPlatform(platform) {
 		return "", fmt.Errorf("unsupported platform %q", platform)
 	}
 	switch cadence {
@@ -246,16 +245,25 @@ func OutputFilename(platform, cadence string, w Window) (string, error) {
 }
 
 func BuildPrompt(req DraftRequest) string {
+	if req.Platform == PlatformReddit {
+		return BuildRedditPrompt(req)
+	}
 	stats := summarize(req.Tenders)
 	var b strings.Builder
-	fmt.Fprintf(&b, "Write exactly %d alternative X posts for Promitheies.cy.\n", DefaultOptionCount)
-	fmt.Fprintf(&b, "Promitheies.cy helps Cyprus businesses discover public tender opportunities without manually checking fragmented procurement portals.\n")
+	fmt.Fprintf(&b, "Write exactly one X post for Symvaseis.CY in Greek.\n")
+	fmt.Fprintf(&b, "Output language: Greek. Use natural Cyprus/Greek business language. Keep the brand name Symvaseis.CY unchanged.\n")
+	fmt.Fprintf(&b, "Symvaseis.CY helps Cyprus businesses discover public tender opportunities without manually checking fragmented procurement portals.\n")
 	fmt.Fprintf(&b, "The audience is Cyprus SMEs, contractors, suppliers, consultants, and operators who can bid on government work.\n")
-	fmt.Fprintf(&b, "The goal of this post is awareness: make people understand that Promitheies tracks new public tenders and is worth checking regularly.\n")
-	fmt.Fprintf(&b, "Each option should let the LLM choose the strongest factual angle from the tender data: urgency, opportunity size, sector relevance, number of new tenders, or deadline pressure.\n")
-	fmt.Fprintf(&b, "Each post must be under %d characters, professional, factual, and copy-ready.\n", MaxXChars)
-	fmt.Fprintf(&b, "Use a strong first sentence, but avoid hype, clickbait, emojis, hashtags, markdown, and vague claims.\n")
-	fmt.Fprintf(&b, "Return each option on its own line, numbered 1-3, and nothing else.\n")
+	fmt.Fprintf(&b, "The goal of this post is awareness: make people understand that Symvaseis.CY retrieved the latest public tenders and is worth checking regularly.\n")
+	fmt.Fprintf(&b, "The post must clearly communicate that these are the latest tenders retrieved by Symvaseis.CY for the selected period.\n")
+	fmt.Fprintf(&b, "Base the post on the tender facts below. These are the latest retrieved TED tenders selected from the database.\n")
+	fmt.Fprintf(&b, "Mention two or three of these recent tenders when possible, using short readable summaries instead of full titles if needed.\n")
+	fmt.Fprintf(&b, "For each tender you mention, include the authority and category name when available.\n")
+	fmt.Fprintf(&b, "Choose the strongest factual angle from the tender data: urgency, opportunity size, sector relevance, number of new tenders, or deadline pressure.\n")
+	fmt.Fprintf(&b, "The post must be under %d characters, professional, factual, and copy-ready.\n", MaxXChars)
+	fmt.Fprintf(&b, "Format for copy/paste: one clean paragraph, no bullets, no numbering, no labels like 'Post:', no markdown, and no surrounding quotes.\n")
+	fmt.Fprintf(&b, "Use a strong first sentence, but avoid hype, clickbait, emojis, hashtags, and vague claims.\n")
+	fmt.Fprintf(&b, "Return only the final post text and nothing else.\n")
 	fmt.Fprintf(&b, "Do not invent tender counts, values, authorities, sectors, deadlines, or URLs.\n")
 	fmt.Fprintf(&b, "Cadence: %s\n", req.Cadence)
 	fmt.Fprintf(&b, "Date range: %s\n", DateRangeLabel(req.Window))
@@ -276,6 +284,9 @@ func BuildPrompt(req DraftRequest) string {
 		if t.AuthorityName != "" {
 			fmt.Fprintf(&b, "; authority: %s", t.AuthorityName)
 		}
+		if category := t.CategoryName(); category != "" {
+			fmt.Fprintf(&b, "; category: %s", category)
+		}
 		if t.CPVDivision != nil && *t.CPVDivision != "" {
 			fmt.Fprintf(&b, "; CPV division: %s", *t.CPVDivision)
 		}
@@ -288,6 +299,78 @@ func BuildPrompt(req DraftRequest) string {
 		b.WriteString("\n")
 	}
 	return b.String()
+}
+
+// BuildRedditPrompt creates a useful community update rather than an advert:
+// it explains what opened, which local businesses may care, and where to
+// inspect the primary tender details.
+func BuildRedditPrompt(req DraftRequest) string {
+	stats := summarize(req.Tenders)
+	var b strings.Builder
+	fmt.Fprintf(&b, "Write one useful Reddit post for a Cyprus community about public tender opportunities that opened in the selected period.\n")
+	fmt.Fprintf(&b, "Output language: clear, natural English for Cyprus residents and businesses. Preserve official Greek tender or authority names when they are supplied. Keep Symvaseis.CY unchanged.\n")
+	fmt.Fprintf(&b, "Symvaseis.CY helps people find Cyprus public procurement opportunities without manually checking fragmented portals.\n")
+	fmt.Fprintf(&b, "This is a community update, not an advertisement. Lead with the practical value: what opened, the sectors involved, who may find it relevant, and any deadline people should notice.\n")
+	fmt.Fprintf(&b, "Use the tender facts only. Do not infer eligibility, contract scope, economic impact, values, deadlines, counts, or links that are not stated. Do not provide legal, procurement, or bidding advice.\n")
+	fmt.Fprintf(&b, "Format for copy/paste in Reddit Markdown:\n")
+	fmt.Fprintf(&b, "- First line: a specific, neutral title under 120 characters; do not prefix it with 'Title:'.\n")
+	fmt.Fprintf(&b, "- Then a short 1–2 sentence summary of the selected day or week and why it may matter to Cyprus businesses or interested residents.\n")
+	fmt.Fprintf(&b, "- Add a 'What opened' section with up to five concise bullets. For each tender mentioned, include its plain-language subject, contracting authority, category, estimated value, and deadline only when available.\n")
+	fmt.Fprintf(&b, "- Add a brief 'Why it may be useful' section that connects only the stated sectors to likely interested local audiences (for example contractors, suppliers, consultants, or service providers), without claiming they qualify.\n")
+	fmt.Fprintf(&b, "- End with a low-pressure invitation to explore the open-tenders link and verify requirements in the official notice.\n")
+	fmt.Fprintf(&b, "Avoid marketing language, hype, emojis, hashtags, unsupported opinions, and calls to upvote. Be factual, skimmable, and genuinely helpful.\n")
+	fmt.Fprintf(&b, "Return only the final Reddit post; no explanation, code fence, or surrounding quotes.\n")
+	fmt.Fprintf(&b, "Cadence: %s\n", req.Cadence)
+	fmt.Fprintf(&b, "Date range: %s\n", DateRangeLabel(req.Window))
+	fmt.Fprintf(&b, "New open TED tenders: %d\n", len(req.Tenders))
+	if len(stats.CPVDivisions) > 0 {
+		fmt.Fprintf(&b, "Top CPV divisions: %s\n", strings.Join(stats.CPVDivisions, ", "))
+	}
+	if stats.EarliestDeadline != "" {
+		fmt.Fprintf(&b, "Earliest deadline: %s\n", stats.EarliestDeadline)
+	}
+	fmt.Fprintf(&b, "Open tenders URL: %s\n\n", OpenTendersURL(req.PublicBaseURL))
+	b.WriteString("Tender facts:\n")
+	for _, t := range req.Tenders {
+		fmt.Fprintf(&b, "- ID %d", t.ID)
+		if t.Title != "" {
+			fmt.Fprintf(&b, "; title: %s", t.Title)
+		}
+		if t.AuthorityName != "" {
+			fmt.Fprintf(&b, "; authority: %s", t.AuthorityName)
+		}
+		if category := t.CategoryName(); category != "" {
+			fmt.Fprintf(&b, "; category: %s", category)
+		}
+		if t.CPVDivision != nil && *t.CPVDivision != "" {
+			fmt.Fprintf(&b, "; CPV division: %s", *t.CPVDivision)
+		}
+		if t.EstimatedValueEUR != nil {
+			fmt.Fprintf(&b, "; estimated value EUR %.2f", *t.EstimatedValueEUR)
+		}
+		if t.Deadline != nil {
+			fmt.Fprintf(&b, "; deadline: %s", t.Deadline.Format("2006-01-02"))
+		}
+		b.WriteString("\n")
+	}
+	return b.String()
+}
+
+func platformLabel(platform string) string {
+	if platform == PlatformReddit {
+		return "Reddit"
+	}
+	return "X"
+}
+
+func (t Tender) CategoryName() string {
+	if t.CPVCategoryName != nil && strings.TrimSpace(*t.CPVCategoryName) != "" {
+		return strings.TrimSpace(*t.CPVCategoryName)
+	}
+	if t.CPVDivision != nil && strings.TrimSpace(*t.CPVDivision) != "" {
+		return cpv.NameLang("el", strings.TrimSpace(*t.CPVDivision))
+	}
+	return ""
 }
 
 func DateRangeLabel(w Window) string {

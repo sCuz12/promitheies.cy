@@ -47,7 +47,7 @@ func Fetch(url string) ([]Award, error) {
 	if err != nil {
 		return nil, fmt.Errorf("build request: %w", err)
 	}
-	req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; PromitheiesCyBot/1.0)")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (compatible; SymvaseisCyBot/1.0)")
 
 	resp, err := client.Do(req)
 	if err != nil {

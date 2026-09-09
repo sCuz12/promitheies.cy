@@ -39,6 +39,21 @@ func TestWindowForWeeklyStartsMonday(t *testing.T) {
 	}
 }
 
+func TestWindowForWeeklySundayStartsPreviousMonday(t *testing.T) {
+	selected := time.Date(2026, 9, 6, 15, 4, 0, 0, time.UTC) // Sunday
+
+	w, err := WindowFor(selected, CadenceWeekly)
+	if err != nil {
+		t.Fatalf("WindowFor returned error: %v", err)
+	}
+	if got, want := w.Start.Format("2006-01-02"), "2026-08-31"; got != want {
+		t.Fatalf("start = %s, want %s", got, want)
+	}
+	if got, want := w.End.Format("2006-01-02"), "2026-09-07"; got != want {
+		t.Fatalf("end = %s, want %s", got, want)
+	}
+}
+
 func TestOutputFilenameIsUnderPosts(t *testing.T) {
 	w := Window{Start: time.Date(2026, 9, 2, 0, 0, 0, 0, time.UTC)}
 
@@ -52,29 +67,26 @@ func TestOutputFilenameIsUnderPosts(t *testing.T) {
 }
 
 func TestMarkdownDraftIncludesCopyBlockAndSources(t *testing.T) {
+	category := "Κατασκευαστικές εργασίες"
 	req := DraftRequest{
 		Cadence:  CadenceDaily,
 		Platform: PlatformX,
 		Window:   Window{Start: time.Date(2026, 9, 2, 0, 0, 0, 0, time.UTC), End: time.Date(2026, 9, 3, 0, 0, 0, 0, time.UTC)},
 		Tenders: []Tender{{
-			ID:            42,
-			Title:         "Road works",
-			AuthorityName: "Ministry of Transport",
-			ExternalID:    "123456-2026",
+			ID:              42,
+			Title:           "Road works",
+			AuthorityName:   "Ministry of Transport",
+			ExternalID:      "123456-2026",
+			CPVCategoryName: &category,
 		}},
 	}
 
-	md := MarkdownDraft(req, []string{
-		"First tender post",
-		"Second tender post",
-		"Third tender post",
-	})
+	md := MarkdownDraft(req, "Οι τελευταίοι διαγωνισμοί είναι διαθέσιμοι.")
 
-	assertContains(t, md, "## Copy options")
-	assertContains(t, md, "### Option 1")
-	assertContains(t, md, "```text\nFirst tender post\n```")
-	assertContains(t, md, "### Option 3")
+	assertContains(t, md, "## Copy post")
+	assertContains(t, md, "```text\nΟι τελευταίοι διαγωνισμοί είναι διαθέσιμοι.\n```")
 	assertContains(t, md, "#42 TED 123456-2026: Road works")
+	assertContains(t, md, "(Κατασκευαστικές εργασίες)")
 	assertContains(t, md, "Source: TED")
 }
 
@@ -82,16 +94,18 @@ func TestBuildPromptIncludesOnlyTEDTenderFacts(t *testing.T) {
 	value := 12500.0
 	deadline := time.Date(2026, 9, 20, 0, 0, 0, 0, time.UTC)
 	cpv := "45000000"
+	category := "Κατασκευαστικές εργασίες"
 	req := DraftRequest{
 		Cadence:       CadenceDaily,
 		Platform:      PlatformX,
 		Window:        Window{Start: time.Date(2026, 9, 2, 0, 0, 0, 0, time.UTC), End: time.Date(2026, 9, 3, 0, 0, 0, 0, time.UTC)},
-		PublicBaseURL: "https://promitheies.cy/",
+		PublicBaseURL: "https://symvaseis.cy/",
 		Tenders: []Tender{{
 			ID:                42,
 			Title:             "Road works",
 			AuthorityName:     "Ministry of Transport",
 			CPVDivision:       &cpv,
+			CPVCategoryName:   &category,
 			EstimatedValueEUR: &value,
 			Deadline:          &deadline,
 		}},
@@ -99,14 +113,45 @@ func TestBuildPromptIncludesOnlyTEDTenderFacts(t *testing.T) {
 
 	prompt := BuildPrompt(req)
 
-	assertContains(t, prompt, "Write exactly 3 alternative X posts")
+	assertContains(t, prompt, "Write exactly one X post for Symvaseis.CY in Greek")
+	assertContains(t, prompt, "Output language: Greek")
 	assertContains(t, prompt, "helps Cyprus businesses discover public tender opportunities")
 	assertContains(t, prompt, "The goal of this post is awareness")
-	assertContains(t, prompt, "choose the strongest factual angle")
+	assertContains(t, prompt, "latest tenders retrieved by Symvaseis.CY")
+	assertContains(t, prompt, "Mention two or three of these recent tenders")
+	assertContains(t, prompt, "include the authority and category name")
+	assertContains(t, prompt, "one clean paragraph")
+	assertContains(t, prompt, "Choose the strongest factual angle")
 	assertContains(t, prompt, "New open TED tenders: 1")
-	assertContains(t, prompt, "Open tenders URL: https://promitheies.cy/diagonismoi")
+	assertContains(t, prompt, "Open tenders URL: https://symvaseis.cy/diagonismoi")
 	assertContains(t, prompt, "title: Road works")
+	assertContains(t, prompt, "category: Κατασκευαστικές εργασίες")
 	assertContains(t, prompt, "estimated value EUR 12500.00")
+}
+
+func TestBuildRedditPromptPrioritizesCommunityValue(t *testing.T) {
+	category := "Construction work"
+	req := DraftRequest{
+		Cadence:       CadenceWeekly,
+		Platform:      PlatformReddit,
+		Window:        Window{Start: time.Date(2026, 8, 31, 0, 0, 0, 0, time.UTC), End: time.Date(2026, 9, 7, 0, 0, 0, 0, time.UTC)},
+		PublicBaseURL: "https://symvaseis.cy",
+		Tenders: []Tender{{
+			ID:              42,
+			Title:           "Road works",
+			AuthorityName:   "Ministry of Transport",
+			CPVCategoryName: &category,
+		}},
+	}
+
+	prompt := BuildPrompt(req)
+	assertContains(t, prompt, "useful Reddit post for a Cyprus community")
+	assertContains(t, prompt, "community update, not an advertisement")
+	assertContains(t, prompt, "What opened")
+	assertContains(t, prompt, "Why it may be useful")
+	assertContains(t, prompt, "verify requirements in the official notice")
+	assertContains(t, prompt, "title: Road works")
+	assertContains(t, prompt, "category: Construction work")
 }
 
 func TestValidateXPostRejectsOverLimit(t *testing.T) {
@@ -124,25 +169,18 @@ func TestGenerateDraftSkipsLLMWhenNoTenders(t *testing.T) {
 		Window:   Window{Start: time.Date(2026, 9, 2, 0, 0, 0, 0, time.UTC), End: time.Date(2026, 9, 3, 0, 0, 0, 0, time.UTC)},
 	}
 
-	posts, err := GenerateDraft(context.Background(), llm, req)
+	post, err := GenerateDraft(context.Background(), llm, req)
 	if err != nil {
 		t.Fatalf("GenerateDraft returned error: %v", err)
 	}
 	if llm.called {
 		t.Fatal("LLM was called for no-tender draft")
 	}
-	if got, want := len(posts), 1; got != want {
-		t.Fatalf("got %d fallback posts, want %d", got, want)
-	}
-	assertContains(t, posts[0], "No new open TED tenders")
+	assertContains(t, post, "Δεν εντοπίστηκαν νέοι ανοικτοί διαγωνισμοί TED")
 }
 
 func TestGenerateDraftUsesLLMAndCleansOutput(t *testing.T) {
-	llm := &fakeLLM{post: strings.Join([]string{
-		"1. New tenders in Cyprus today. Check deadlines: /diagonismoi",
-		"2. Cyprus SMEs: fresh public-sector opportunities are live. View: /diagonismoi",
-		"3. New TED tender leads for Cyprus are ready to review. View: /diagonismoi",
-	}, "\n")}
+	llm := &fakeLLM{post: "```text\nΟι τελευταίοι διαγωνισμοί που ανέκτησε το Symvaseis.CY: οδικά έργα, υπηρεσίες καθαρισμού και προμήθειες εξοπλισμού. Δείτε προθεσμίες: /diagonismoi\n```"}
 	req := DraftRequest{
 		Cadence:  CadenceDaily,
 		Platform: PlatformX,
@@ -150,26 +188,17 @@ func TestGenerateDraftUsesLLMAndCleansOutput(t *testing.T) {
 		Tenders:  []Tender{{ID: 1, Title: "Tender"}},
 	}
 
-	posts, err := GenerateDraft(context.Background(), llm, req)
+	post, err := GenerateDraft(context.Background(), llm, req)
 	if err != nil {
 		t.Fatalf("GenerateDraft returned error: %v", err)
 	}
 	if !llm.called {
 		t.Fatal("LLM was not called")
 	}
-	if got, want := len(posts), DefaultOptionCount; got != want {
-		t.Fatalf("got %d posts, want %d", got, want)
+	if strings.Contains(post, "```") {
+		t.Fatalf("post still contains code fence: %q", post)
 	}
-	if strings.Contains(posts[0], "1.") {
-		t.Fatalf("post still contains numbering: %q", posts[0])
-	}
-}
-
-func TestParsePostOptionsRequiresThreeOptions(t *testing.T) {
-	_, err := ParsePostOptions("1. One\n2. Two")
-	if err == nil {
-		t.Fatal("expected missing option to fail")
-	}
+	assertContains(t, post, "Οι τελευταίοι διαγωνισμοί")
 }
 
 type fakeLLM struct {
