@@ -60,11 +60,12 @@
     {{$p := .}}
     {{range .Data.LatestOpenTenders}}
       <article class="tender-card">
+        {{$sourceURL := sourceURL $p.Lang .Source .ExternalID}}
         <div class="tender-card-topline">
           <span class="badge badge-open">{{$p.T "status.open"}}</span>
           {{if .PublishedAt}}<time datetime="{{.PublishedAt}}">{{$p.T "home.open.published"}} {{.PublishedAt}}</time>{{end}}
         </div>
-        <h3><a href="/tender/{{.ID}}">{{.Title}}</a></h3>
+        <h3><a class="card-primary-link" href="/tender/{{.ID}}">{{.Title}}</a></h3>
         <p class="tender-authority"><a href="/authority/{{.AuthoritySlug}}">{{.AuthorityName}}</a></p>
         <dl class="tender-meta">
           <div>
@@ -76,7 +77,10 @@
             <dd>{{if .EstimatedVal}}€{{.EstimatedVal | euro}}{{else}}—{{end}}</dd>
           </div>
         </dl>
-        {{if .CPVDivision}}<a class="tender-category" href="/diagonismoi?cpv={{.CPVDivision}}">{{cpvName $p.Lang .CPVDivision}}</a>{{end}}
+        <div class="tender-card-footer">
+          {{if .CPVDivision}}<a class="tender-category" href="/diagonismoi?cpv={{.CPVDivision}}">{{cpvName $p.Lang .CPVDivision}}</a>{{end}}
+          {{if $sourceURL}}<a class="source-link" href="{{$sourceURL}}" target="_blank" rel="noopener">{{$p.T "home.open.official"}} <span aria-hidden="true">↗</span></a>{{end}}
+        </div>
       </article>
     {{end}}
   </div>

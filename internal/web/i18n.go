@@ -162,10 +162,12 @@ var strings_ = map[string]map[Lang]string{
 	"home.open.tender_one":       {LangEL: "διαγωνισμός", LangEN: "tender"},
 	"home.open.tender_many":      {LangEL: "διαγωνισμοί", LangEN: "tenders"},
 	"home.open.published":        {LangEL: "Δημοσίευση", LangEN: "Published"},
-	"stat.tenders":   {LangEL: "διαγωνισμοί", LangEN: "tenders tracked"},
-	"stat.awards":    {LangEL: "αναθέσεις", LangEN: "awards recorded"},
-	"stat.value":     {LangEL: "συνολική αξία αναθέσεων", LangEN: "total awarded value"},
-	"section.recent": {LangEL: "Πρόσφατες αναθέσεις", LangEN: "Recent awards"},
+	"home.open.official":         {LangEL: "Επίσημη προκήρυξη", LangEN: "Official notice"},
+	"tender.official_notice":     {LangEL: "Προβολή επίσημης προκήρυξης", LangEN: "View official notice"},
+	"stat.tenders":               {LangEL: "διαγωνισμοί", LangEN: "tenders tracked"},
+	"stat.awards":                {LangEL: "αναθέσεις", LangEN: "awards recorded"},
+	"stat.value":                 {LangEL: "συνολική αξία αναθέσεων", LangEN: "total awarded value"},
+	"section.recent":             {LangEL: "Πρόσφατες αναθέσεις", LangEN: "Recent awards"},
 
 	// table headers
 	"th.date":        {LangEL: "Ημερομηνία", LangEN: "Date"},

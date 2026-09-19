@@ -1,5 +1,6 @@
 {{define "title"}}{{.Data.Title}}{{end}}
 {{define "content"}}
+{{$sourceURL := sourceURL .Lang .Data.Source .Data.ExternalID}}
 <p class="breadcrumb"><a href="/diagonismoi">{{.T "breadcrumb.open_tenders"}}</a> / {{.Data.ID}}</p>
 <h1>{{.Data.Title}}</h1>
 
@@ -32,7 +33,11 @@
     </tr>
     <tr>
       <th>{{.T "th.source"}}</th>
-      <td><span class="source-chip">{{.Data.Source}}</span>{{if .Data.ExternalID}} <code>{{.Data.ExternalID}}</code>{{end}}</td>
+      <td>
+        <span class="source-chip">{{.Data.Source}}</span>
+        {{if .Data.ExternalID}} <code>{{.Data.ExternalID}}</code>{{end}}
+        {{if $sourceURL}}<a class="official-source-link" href="{{$sourceURL}}" target="_blank" rel="noopener">{{.T "tender.official_notice"}} <span aria-hidden="true">↗</span></a>{{end}}
+      </td>
     </tr>
   </tbody>
 </table>

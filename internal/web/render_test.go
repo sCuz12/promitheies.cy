@@ -32,7 +32,7 @@ func fakePages() map[string]any {
 			OpenTenderCategories: []OpenTenderCategory{{Code: cpvDiv, Count: 12}},
 			LatestOpenTenders: []TenderRow{{
 				ID: 99, Title: "Προμήθεια φαρμάκων", AuthoritySlug: "dimos-lemesou", AuthorityName: "Δήμος Λεμεσού",
-				CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date, Deadline: &date, Source: "ted",
+				CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date, Deadline: &date, Source: "ted", ExternalID: stringPtr("123456-2026"),
 			}},
 			RecentAwards: []AwardRow{award},
 		},
@@ -51,7 +51,7 @@ func fakePages() map[string]any {
 		},
 		"tender": &Tender{
 			ID: 99, Title: "Προμήθεια φαρμάκων", AuthoritySlug: "dimos-lemesou", AuthorityName: "Δήμος Λεμεσού",
-			CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date, Source: "ted",
+			CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date, Source: "ted", ExternalID: stringPtr("123456-2026"),
 		},
 		"open_tenders": OpenTendersPageData{
 			Query: "φάρμακα", CPVDivision: cpvDiv, Divisions: cpv.Divisions, LastUpdated: &date,
@@ -69,6 +69,8 @@ func fakePages() map[string]any {
 		},
 	}
 }
+
+func stringPtr(value string) *string { return &value }
 
 func TestPageTemplatesRenderInBothLanguages(t *testing.T) {
 	templates, err := loadTemplates("../../templates")
@@ -117,11 +119,32 @@ func TestHomeRendersOpenTenderNavigation(t *testing.T) {
 	for _, want := range []string{
 		"Latest open tenders",
 		`href="/diagonismoi?cpv=45000000"`,
-		`href="/tender/99"`,
+		`class="card-primary-link" href="/tender/99"`,
+		`href="https://ted.europa.eu/en/notice/-/detail/123456-2026"`,
+		`target="_blank" rel="noopener"`,
+		"Official notice",
 		"View all open tenders (42)",
 	} {
 		if !strings.Contains(out, want) {
 			t.Errorf("home output missing %q", want)
 		}
+	}
+}
+
+func TestTenderRendersOfficialSourceLink(t *testing.T) {
+	templates, err := loadTemplates("../../templates")
+	if err != nil {
+		t.Fatalf("loadTemplates: %v", err)
+	}
+
+	r := httptest.NewRequest("GET", "/tender/99?lang=el", nil)
+	var buf bytes.Buffer
+	if err := templates["tender"].ExecuteTemplate(&buf, "layout", newPage(LangEL, r, fakePages()["tender"])); err != nil {
+		t.Fatalf("execute tender: %v", err)
+	}
+
+	out := buf.String()
+	if !strings.Contains(out, `href="https://ted.europa.eu/el/notice/-/detail/123456-2026"`) {
+		t.Error("tender output missing official TED link")
 	}
 }

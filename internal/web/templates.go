@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -17,6 +18,12 @@ var funcMap = template.FuncMap{
 	},
 	"inc":     func(i int) int { return i + 1 },
 	"cpvName": func(lang Lang, code string) string { return cpv.NameLang(string(lang), code) },
+	"sourceURL": func(lang Lang, source string, externalID *string) string {
+		if !strings.EqualFold(source, "ted") || externalID == nil || *externalID == "" {
+			return ""
+		}
+		return "https://ted.europa.eu/" + string(lang) + "/notice/-/detail/" + url.PathEscape(*externalID)
+	},
 }
 
 // groupThousands inserts "," every three digits from the right of an
