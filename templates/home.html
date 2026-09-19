@@ -32,6 +32,59 @@
     {{range .Data.BySource}}<span class="source-pill">{{.Source}}: {{.Count | commas}}</span>{{end}}
   </div>
 </section>
+  
+<section class="opportunities-section">
+  <div class="section-heading">
+    <div>
+      <span class="section-kicker">{{.T "home.open.kicker"}}</span>
+      <h2>{{.T "home.open.title"}}</h2>
+    </div>
+    <a class="section-link" href="/diagonismoi">{{.T "home.open.viewall"}} ({{.Data.OpenTenderCount | commas}}) <span aria-hidden="true">→</span></a>
+  </div>
+  <p class="section-intro">{{.T "home.open.intro"}}</p>
+
+  {{if .Data.OpenTenderCategories}}
+  <nav class="category-nav" aria-label="{{.T "home.open.categories_label"}}">
+    {{$p := .}}
+    {{range .Data.OpenTenderCategories}}
+      <a class="category-card" href="/diagonismoi?cpv={{.Code}}">
+        <span class="category-name">{{cpvName $p.Lang .Code}}</span>
+        <span class="category-count">{{.Count | commas}} {{if eq .Count 1}}{{$p.T "home.open.tender_one"}}{{else}}{{$p.T "home.open.tender_many"}}{{end}}</span>
+      </a>
+    {{end}}
+  </nav>
+  {{end}}
+
+  {{if .Data.LatestOpenTenders}}
+  <div class="tender-grid">
+    {{$p := .}}
+    {{range .Data.LatestOpenTenders}}
+      <article class="tender-card">
+        <div class="tender-card-topline">
+          <span class="badge badge-open">{{$p.T "status.open"}}</span>
+          {{if .PublishedAt}}<time datetime="{{.PublishedAt}}">{{$p.T "home.open.published"}} {{.PublishedAt}}</time>{{end}}
+        </div>
+        <h3><a href="/tender/{{.ID}}">{{.Title}}</a></h3>
+        <p class="tender-authority"><a href="/authority/{{.AuthoritySlug}}">{{.AuthorityName}}</a></p>
+        <dl class="tender-meta">
+          <div>
+            <dt>{{$p.T "th.deadline"}}</dt>
+            <dd>{{if .Deadline}}{{.Deadline}}{{else}}—{{end}}</dd>
+          </div>
+          <div>
+            <dt>{{$p.T "th.estvalue"}}</dt>
+            <dd>{{if .EstimatedVal}}€{{.EstimatedVal | euro}}{{else}}—{{end}}</dd>
+          </div>
+        </dl>
+        {{if .CPVDivision}}<a class="tender-category" href="/diagonismoi?cpv={{.CPVDivision}}">{{cpvName $p.Lang .CPVDivision}}</a>{{end}}
+      </article>
+    {{end}}
+  </div>
+  <a class="mobile-section-link" href="/diagonismoi">{{.T "home.open.viewall_count"}} ({{.Data.OpenTenderCount | commas}}) <span aria-hidden="true">→</span></a>
+  {{else}}
+  <div class="empty-state"><p>{{.T "open_tenders.empty.noresults"}}</p></div>
+  {{end}}
+</section>
 
 <section>
   <h2>{{.T "section.recent"}}</h2>
