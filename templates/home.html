@@ -70,7 +70,18 @@
         <dl class="tender-meta">
           <div>
             <dt>{{$p.T "th.deadline"}}</dt>
-            <dd>{{if .Deadline}}{{.Deadline}}{{else}}—{{end}}</dd>
+            <dd>
+              {{if .Deadline}}
+                {{.Deadline}}
+                <span class="deadline-countdown{{if and (ge .DaysRemaining 0) (le .DaysRemaining 3)}} closing-soon{{end}}">
+                  {{if lt .DaysRemaining 0}}{{$p.T "deadline.passed"}}
+                  {{else if eq .DaysRemaining 0}}{{$p.T "deadline.today"}}
+                  {{else if eq .DaysRemaining 1}}{{$p.T "deadline.one_day"}}
+                  {{else}}{{.DaysRemaining}} {{$p.T "deadline.days"}}{{end}}
+                </span>
+                {{if and (ge .DaysRemaining 0) (le .DaysRemaining 3)}}<span class="closing-soon-label">{{$p.T "deadline.closing_soon"}}</span>{{end}}
+              {{else}}—{{end}}
+            </dd>
           </div>
           <div>
             <dt>{{$p.T "th.estvalue"}}</dt>

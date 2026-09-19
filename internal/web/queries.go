@@ -364,6 +364,7 @@ type Tender struct {
 	ProcedureType *string
 	PublishedAt   *string
 	Deadline      *string
+	DaysRemaining int
 	Source        string
 	ExternalID    *string
 }
@@ -373,7 +374,7 @@ func GetTender(ctx context.Context, pool *pgxpool.Pool, id int64) (*Tender, erro
 	err := pool.QueryRow(ctx, `
 		SELECT t.id, coalesce(t.title_el, t.title_en, ''), auth.slug, coalesce(auth.canonical_name_el, auth.canonical_name_en, ''),
 		       t.cpv_division, t.estimated_value, t.status, t.procedure_type, to_char(t.published_at, 'YYYY-MM-DD'),
-		       to_char(t.deadline, 'YYYY-MM-DD'), t.source,
+		       to_char(t.deadline, 'YYYY-MM-DD'), coalesce(t.deadline - CURRENT_DATE, 0), t.source,
 		       CASE
 		         WHEN t.external_ids ? 'ted' THEN t.external_ids->>'ted'
 		         WHEN t.external_ids ? 'cftid' THEN t.external_ids->>'cftid'
@@ -385,7 +386,7 @@ func GetTender(ctx context.Context, pool *pgxpool.Pool, id int64) (*Tender, erro
 	`, id).Scan(
 		&t.ID, &t.Title, &t.AuthoritySlug, &t.AuthorityName,
 		&t.CPVDivision, &t.EstimatedVal, &t.Status, &t.ProcedureType,
-		&t.PublishedAt, &t.Deadline, &t.Source, &t.ExternalID,
+		&t.PublishedAt, &t.Deadline, &t.DaysRemaining, &t.Source, &t.ExternalID,
 	)
 	if err != nil {
 		return nil, err
@@ -417,6 +418,7 @@ type TenderRow struct {
 	Status        string
 	PublishedAt   *string
 	Deadline      *string
+	DaysRemaining int
 	Source        string
 	ExternalID    *string
 }
@@ -461,7 +463,7 @@ func ListOpenTenders(ctx context.Context, pool *pgxpool.Pool, q, cpvDivision str
 	rows, err := pool.Query(ctx, `
 		SELECT t.id, coalesce(t.title_el, t.title_en, ''), auth.slug, coalesce(auth.canonical_name_el, auth.canonical_name_en, ''),
 		       t.cpv_division, t.estimated_value, t.status, to_char(t.published_at, 'YYYY-MM-DD'), to_char(t.deadline, 'YYYY-MM-DD'),
-		       t.source, t.external_ids->>'ted'
+		       coalesce(t.deadline - CURRENT_DATE, 0), t.source, t.external_ids->>'ted'
 		FROM tenders t
 		JOIN authorities auth ON auth.id = t.authority_id
 		WHERE t.source = 'ted'
@@ -483,7 +485,7 @@ func ListOpenTenders(ctx context.Context, pool *pgxpool.Pool, q, cpvDivision str
 		if err := rows.Scan(
 			&r.ID, &r.Title, &r.AuthoritySlug, &r.AuthorityName,
 			&r.CPVDivision, &r.EstimatedVal, &r.Status, &r.PublishedAt,
-			&r.Deadline, &r.Source, &r.ExternalID,
+			&r.Deadline, &r.DaysRemaining, &r.Source, &r.ExternalID,
 		); err != nil {
 			return nil, err
 		}

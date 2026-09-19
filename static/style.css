@@ -473,6 +473,7 @@ h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
   background: var(--line);
 }
 .tender-card {
+  position: relative;
   display: flex;
   min-width: 0;
   flex-direction: column;
@@ -495,6 +496,16 @@ h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
   line-height: 1.3;
 }
 .tender-card h3 a { color: var(--ink); }
+.card-primary-link::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+}
+.tender-card a:not(.card-primary-link) {
+  position: relative;
+  z-index: 1;
+}
+.tender-card:has(.card-primary-link:hover) { background: var(--copper-soft); }
 .tender-authority {
   margin: 0 0 .85rem;
   font-size: .78rem;
@@ -523,11 +534,68 @@ h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
   font-size: .74rem;
 }
 .tender-category {
-  align-self: flex-start;
   color: var(--olive);
   font-size: .7rem;
   font-weight: 600;
 }
+.tender-card-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: .75rem;
+}
+.source-link {
+  flex-shrink: 0;
+  color: var(--copper-dark);
+  font-family: var(--font-mono);
+  font-size: .64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.official-source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  margin-left: .75rem;
+  padding: .4rem .65rem;
+  color: #fff;
+  background: var(--copper);
+  border: 1px solid var(--copper-dark);
+  border-bottom-color: var(--copper-dark);
+  font-family: var(--font-mono);
+  font-size: .66rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+.official-source-link:hover {
+  color: #fff;
+  background: var(--copper-dark);
+  border-bottom-color: var(--copper-dark);
+}
+.deadline-countdown {
+  display: block;
+  margin-top: .18rem;
+  color: var(--olive);
+  font-family: var(--font-sans);
+  font-size: .7rem;
+  font-weight: 600;
+}
+.deadline-countdown.closing-soon { color: var(--stamp); }
+.closing-soon-label {
+  display: inline-block;
+  margin-top: .3rem;
+  padding: .12rem .36rem;
+  color: #fff;
+  background: var(--stamp);
+  font-family: var(--font-mono);
+  font-size: .56rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+.deadline-date { font-family: var(--font-mono); }
 .mobile-section-link { display: none; }
 
 @media (max-width: 800px) {

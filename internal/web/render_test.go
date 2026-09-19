@@ -32,7 +32,7 @@ func fakePages() map[string]any {
 			OpenTenderCategories: []OpenTenderCategory{{Code: cpvDiv, Count: 12}},
 			LatestOpenTenders: []TenderRow{{
 				ID: 99, Title: "Προμήθεια φαρμάκων", AuthoritySlug: "dimos-lemesou", AuthorityName: "Δήμος Λεμεσού",
-				CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date, Deadline: &date, Source: "ted", ExternalID: stringPtr("123456-2026"),
+				CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date, Deadline: &date, DaysRemaining: 2, Source: "ted", ExternalID: stringPtr("123456-2026"),
 			}},
 			RecentAwards: []AwardRow{award},
 		},
@@ -51,7 +51,7 @@ func fakePages() map[string]any {
 		},
 		"tender": &Tender{
 			ID: 99, Title: "Προμήθεια φαρμάκων", AuthoritySlug: "dimos-lemesou", AuthorityName: "Δήμος Λεμεσού",
-			CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date, Source: "ted", ExternalID: stringPtr("123456-2026"),
+			CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date, Deadline: &date, DaysRemaining: 2, Source: "ted", ExternalID: stringPtr("123456-2026"),
 		},
 		"open_tenders": OpenTendersPageData{
 			Query: "φάρμακα", CPVDivision: cpvDiv, Divisions: cpv.Divisions, LastUpdated: &date,
@@ -123,6 +123,8 @@ func TestHomeRendersOpenTenderNavigation(t *testing.T) {
 		`href="https://ted.europa.eu/en/notice/-/detail/123456-2026"`,
 		`target="_blank" rel="noopener"`,
 		"Official notice",
+		"2 days remaining",
+		"Closing soon",
 		"View all open tenders (42)",
 	} {
 		if !strings.Contains(out, want) {
@@ -146,5 +148,8 @@ func TestTenderRendersOfficialSourceLink(t *testing.T) {
 	out := buf.String()
 	if !strings.Contains(out, `href="https://ted.europa.eu/el/notice/-/detail/123456-2026"`) {
 		t.Error("tender output missing official TED link")
+	}
+	if !strings.Contains(out, "2 ημέρες απομένουν") || !strings.Contains(out, "Λήγει σύντομα") {
+		t.Error("tender output missing localized deadline warning")
 	}
 }

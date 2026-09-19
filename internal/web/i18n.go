@@ -164,6 +164,11 @@ var strings_ = map[string]map[Lang]string{
 	"home.open.published":        {LangEL: "Δημοσίευση", LangEN: "Published"},
 	"home.open.official":         {LangEL: "Επίσημη προκήρυξη", LangEN: "Official notice"},
 	"tender.official_notice":     {LangEL: "Προβολή επίσημης προκήρυξης", LangEN: "View official notice"},
+	"deadline.days":              {LangEL: "ημέρες απομένουν", LangEN: "days remaining"},
+	"deadline.one_day":           {LangEL: "1 ημέρα απομένει", LangEN: "1 day remaining"},
+	"deadline.today":             {LangEL: "Λήγει σήμερα", LangEN: "Closes today"},
+	"deadline.passed":            {LangEL: "Η προθεσμία έληξε", LangEN: "Deadline passed"},
+	"deadline.closing_soon":      {LangEL: "Λήγει σύντομα", LangEN: "Closing soon"},
 	"stat.tenders":               {LangEL: "διαγωνισμοί", LangEN: "tenders tracked"},
 	"stat.awards":                {LangEL: "αναθέσεις", LangEN: "awards recorded"},
 	"stat.value":                 {LangEL: "συνολική αξία αναθέσεων", LangEN: "total awarded value"},
@@ -215,8 +220,8 @@ var strings_ = map[string]map[Lang]string{
 	// open tenders page
 	"open_tenders.h1": {LangEL: "Ανοιχτοί διαγωνισμοί", LangEN: "Open tenders"},
 	"open_tenders.subtitle": {
-		LangEL: "Τρέχουσες ευκαιρίες από το TED για έργα, προμήθειες και υπηρεσίες με τόπο εκτέλεσης την Κύπρο.",
-		LangEN: "Current TED opportunities for works, supplies and services with Cyprus as the place of performance.",
+		LangEL: "Ανοιχτοί διαγωνισμοί που σχετίζονται με την Κύπρο και δημοσιεύονται στο TED. Εθνικοί διαγωνισμοί κάτω των ευρωπαϊκών ορίων ενδέχεται να μην περιλαμβάνονται.",
+		LangEN: "Open Cyprus-related tenders published on TED. National below-threshold tenders may not be included.",
 	},
 	"open_tenders.updated":     {LangEL: "Τελευταία ενημέρωση TED:", LangEN: "Last TED update:"},
 	"open_tenders.keywords.ph": {LangEL: "π.χ. φάρμακα, κατασκευές, υπηρεσίες καθαρισμού…", LangEN: "e.g. medicine, construction, cleaning services…"},

@@ -29,7 +29,18 @@
     </tr>
     <tr>
       <th>{{.T "th.deadline"}}</th>
-      <td>{{if .Data.Deadline}}{{.Data.Deadline}}{{else}}—{{end}}</td>
+      <td>
+        {{if .Data.Deadline}}
+          <span class="deadline-date">{{.Data.Deadline}}</span>
+          <span class="deadline-countdown{{if and (ge .Data.DaysRemaining 0) (le .Data.DaysRemaining 3)}} closing-soon{{end}}">
+            {{if lt .Data.DaysRemaining 0}}{{.T "deadline.passed"}}
+            {{else if eq .Data.DaysRemaining 0}}{{.T "deadline.today"}}
+            {{else if eq .Data.DaysRemaining 1}}{{.T "deadline.one_day"}}
+            {{else}}{{.Data.DaysRemaining}} {{.T "deadline.days"}}{{end}}
+          </span>
+          {{if and (ge .Data.DaysRemaining 0) (le .Data.DaysRemaining 3)}}<span class="closing-soon-label">{{.T "deadline.closing_soon"}}</span>{{end}}
+        {{else}}—{{end}}
+      </td>
     </tr>
     <tr>
       <th>{{.T "th.source"}}</th>

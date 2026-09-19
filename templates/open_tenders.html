@@ -47,7 +47,18 @@
       <td><a href="/tender/{{.ID}}">{{.Title}}</a></td>
       <td><a href="/authority/{{.AuthoritySlug}}">{{.AuthorityName}}</a></td>
       <td>{{if .CPVDivision}}{{cpvName $p.Lang .CPVDivision}}{{else}}—{{end}}</td>
-      <td class="nowrap">{{if .Deadline}}{{.Deadline}}{{else}}—{{end}}</td>
+      <td class="nowrap">
+        {{if .Deadline}}
+          {{.Deadline}}
+          <span class="deadline-countdown{{if and (ge .DaysRemaining 0) (le .DaysRemaining 3)}} closing-soon{{end}}">
+            {{if lt .DaysRemaining 0}}{{$p.T "deadline.passed"}}
+            {{else if eq .DaysRemaining 0}}{{$p.T "deadline.today"}}
+            {{else if eq .DaysRemaining 1}}{{$p.T "deadline.one_day"}}
+            {{else}}{{.DaysRemaining}} {{$p.T "deadline.days"}}{{end}}
+          </span>
+          {{if and (ge .DaysRemaining 0) (le .DaysRemaining 3)}}<span class="closing-soon-label">{{$p.T "deadline.closing_soon"}}</span>{{end}}
+        {{else}}—{{end}}
+      </td>
       <td class="num">{{if .EstimatedVal}}€{{.EstimatedVal | euro}}{{else}}—{{end}}</td>
       <td><span class="source-chip">{{.Source}}</span></td>
     </tr>
