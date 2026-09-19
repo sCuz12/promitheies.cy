@@ -19,6 +19,8 @@ var Fields = []string{
 	"buyer-country",
 	"notice-title",
 	"publication-date",
+	"deadline",
+	"deadline-receipt-tender-date-lot",
 	"estimated-value-proc",
 	"estimated-value-cur-proc",
 }
@@ -33,6 +35,8 @@ type rawNotice struct {
 	BuyerCountry          []string            `json:"buyer-country"`
 	NoticeTitle           map[string]string   `json:"notice-title"`
 	PublicationDate       string              `json:"publication-date"`
+	Deadline              []string            `json:"deadline"`
+	TenderDeadlineDates   []string            `json:"deadline-receipt-tender-date-lot"`
 	EstimatedValueProc    string              `json:"estimated-value-proc"`
 	EstimatedValueCurProc string              `json:"estimated-value-cur-proc"`
 }
@@ -47,6 +51,7 @@ type Notice struct {
 	TitleEN           string
 	TitleEL           string
 	PublishedAt       *time.Time
+	Deadline          *time.Time
 	EstimatedValue    *float64
 	Currency          string
 	Status            string
@@ -84,6 +89,7 @@ func ParseNotice(raw json.RawMessage) (Notice, error) {
 		TitleEN:           rn.NoticeTitle["eng"],
 		TitleEL:           rn.NoticeTitle["ell"],
 		PublishedAt:       parsePublicationDate(rn.PublicationDate),
+		Deadline:          parseDeadline(rn.Deadline, rn.TenderDeadlineDates),
 		EstimatedValue:    parseAmount(rn.EstimatedValueProc),
 		Currency:          rn.EstimatedValueCurProc,
 		Raw:               raw,
@@ -144,6 +150,27 @@ func parsePublicationDate(s string) *time.Time {
 		return nil
 	}
 	return &t
+}
+
+// parseDeadline prefers TED's generic deadline field because it matches the
+// deadline surfaced by TED search (and can represent a request-to-participate
+// deadline in staged procedures). The tender-receipt dates are a fallback.
+// When a notice exposes multiple lot deadlines, keep the earliest actionable
+// date for the site's countdown.
+func parseDeadline(groups ...[]string) *time.Time {
+	for _, values := range groups {
+		var earliest *time.Time
+		for _, value := range values {
+			parsed := parsePublicationDate(value)
+			if parsed != nil && (earliest == nil || parsed.Before(*earliest)) {
+				earliest = parsed
+			}
+		}
+		if earliest != nil {
+			return earliest
+		}
+	}
+	return nil
 }
 
 func parseAmount(s string) *float64 {

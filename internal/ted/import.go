@@ -56,10 +56,10 @@ func Import(ctx context.Context, pool *pgxpool.Pool, notices []Notice) (Stats, e
 		err = pool.QueryRow(ctx, `
 			INSERT INTO tenders (
 				external_ids, title_en, title_el, authority_id, cpv_code, cpv_division,
-				estimated_value, currency, status, procedure_type, source, published_at, raw_payload
+				estimated_value, currency, deadline, status, procedure_type, source, published_at, raw_payload
 			) VALUES (
 				jsonb_build_object('ted', $1::text), $2, $3, $4, $5, $6,
-				$7, $8, $9, $10, $11, $12, $13
+				$7, $8, $9, $10, $11, $12, $13, $14
 			)
 			ON CONFLICT (source, (external_ids->>'ted')) WHERE external_ids ? 'ted'
 			DO UPDATE SET
@@ -70,6 +70,7 @@ func Import(ctx context.Context, pool *pgxpool.Pool, notices []Notice) (Stats, e
 				cpv_division = EXCLUDED.cpv_division,
 				estimated_value = EXCLUDED.estimated_value,
 				currency = EXCLUDED.currency,
+				deadline = EXCLUDED.deadline,
 				status = EXCLUDED.status,
 				procedure_type = EXCLUDED.procedure_type,
 				published_at = EXCLUDED.published_at,
@@ -78,7 +79,7 @@ func Import(ctx context.Context, pool *pgxpool.Pool, notices []Notice) (Stats, e
 			RETURNING id, (xmax = 0)
 		`,
 			n.PublicationNumber, nullableStr(n.TitleEN), nullableStr(n.TitleEL), authorityID, primaryCPV, cpvDivision,
-			n.EstimatedValue, n.Currency, n.Status, nullableStr(n.ProcedureType), Source, n.PublishedAt, n.Raw,
+			n.EstimatedValue, n.Currency, n.Deadline, n.Status, nullableStr(n.ProcedureType), Source, n.PublishedAt, n.Raw,
 		).Scan(&tenderID, &inserted)
 		if err != nil {
 			return stats, fmt.Errorf("upsert tender for %s: %w", n.PublicationNumber, err)
@@ -95,6 +96,7 @@ func Import(ctx context.Context, pool *pgxpool.Pool, notices []Notice) (Stats, e
 					CPVDivision:       cpvDivision,
 					EstimatedValueEUR: n.EstimatedValue,
 					PublishedAt:       n.PublishedAt,
+					Deadline:          n.Deadline,
 				})
 			}
 		} else {

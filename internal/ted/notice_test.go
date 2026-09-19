@@ -67,3 +67,36 @@ func TestFirstBuyerName_PrefersGreek(t *testing.T) {
 		t.Errorf("got %q, want Greek name preferred", got)
 	}
 }
+
+func TestParseNoticeDeadline(t *testing.T) {
+	raw := json.RawMessage(`{
+		"publication-number": "640732-2026",
+		"form-type": "competition",
+		"deadline": ["2026-11-12T12:00:00+03:00", "2026-11-09T12:00:00+03:00"],
+		"deadline-receipt-tender-date-lot": ["2027-03-22+03:00"]
+	}`)
+
+	notice, err := ParseNotice(raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if notice.Deadline == nil || notice.Deadline.Format("2006-01-02") != "2026-11-09" {
+		t.Fatalf("Deadline = %v, want 2026-11-09", notice.Deadline)
+	}
+}
+
+func TestParseNoticeDeadlineFallsBackToTenderReceiptDate(t *testing.T) {
+	raw := json.RawMessage(`{
+		"publication-number": "123456-2026",
+		"form-type": "competition",
+		"deadline-receipt-tender-date-lot": ["2026-10-07+03:00"]
+	}`)
+
+	notice, err := ParseNotice(raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if notice.Deadline == nil || notice.Deadline.Format("2006-01-02") != "2026-10-07" {
+		t.Fatalf("Deadline = %v, want 2026-10-07", notice.Deadline)
+	}
+}
