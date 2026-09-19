@@ -12,16 +12,27 @@ import (
 )
 
 type Stats struct {
-	TotalTenders int64
-	TotalAwards  int64
-	TotalValue   float64
-	BySource     []SourceCount
-	RecentAwards []AwardRow
+	TotalTenders         int64
+	TotalAwards          int64
+	TotalValue           float64
+	OpenTenderCount      int64
+	BySource             []SourceCount
+	OpenTenderCategories []OpenTenderCategory
+	LatestOpenTenders    []TenderRow
+	RecentAwards         []AwardRow
 }
 
 type SourceCount struct {
 	Source string
 	Count  int64
+}
+
+// OpenTenderCategory is a currently active CPV division, with the number of
+// live opportunities in it. It powers the quick category navigation on the
+// homepage.
+type OpenTenderCategory struct {
+	Code  string
+	Count int64
 }
 
 // AwardRow is one row in an award listing (dashboard, authority page,
@@ -74,6 +85,51 @@ func GetStats(ctx context.Context, pool *pgxpool.Pool) (Stats, error) {
 	s.RecentAwards, err = recentAwards(ctx, pool, 20, nil, nil)
 	if err != nil {
 		return s, fmt.Errorf("recent awards: %w", err)
+	}
+
+	s.LatestOpenTenders, err = ListOpenTenders(ctx, pool, "", "", 8)
+	if err != nil {
+		return s, fmt.Errorf("latest open tenders: %w", err)
+	}
+
+	categoryRows, err := pool.Query(ctx, `
+		SELECT t.cpv_division, count(*)
+		FROM tenders t
+		JOIN authorities auth ON auth.id = t.authority_id
+		WHERE t.source = 'ted'
+		  AND t.status = 'open'
+		  AND (t.deadline IS NULL OR t.deadline >= CURRENT_DATE)
+		  AND t.cpv_division IS NOT NULL
+		GROUP BY t.cpv_division
+		ORDER BY count(*) DESC, t.cpv_division
+		LIMIT 8
+	`)
+	if err != nil {
+		return s, fmt.Errorf("open tender categories: %w", err)
+	}
+	defer categoryRows.Close()
+	for categoryRows.Next() {
+		var category OpenTenderCategory
+		if err := categoryRows.Scan(&category.Code, &category.Count); err != nil {
+			return s, fmt.Errorf("scan open tender category: %w", err)
+		}
+		s.OpenTenderCategories = append(s.OpenTenderCategories, category)
+	}
+	if err := categoryRows.Err(); err != nil {
+		return s, fmt.Errorf("open tender categories: %w", err)
+	}
+
+	// The category query intentionally excludes unclassified notices and is
+	// capped for navigation, so count the complete live feed separately.
+	if err := pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM tenders t
+		JOIN authorities auth ON auth.id = t.authority_id
+		WHERE t.source = 'ted'
+		  AND t.status = 'open'
+		  AND (t.deadline IS NULL OR t.deadline >= CURRENT_DATE)
+	`).Scan(&s.OpenTenderCount); err != nil {
+		return s, fmt.Errorf("count open tenders: %w", err)
 	}
 
 	return s, nil

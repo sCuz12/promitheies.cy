@@ -27,7 +27,13 @@ func fakePages() map[string]any {
 	return map[string]any{
 		"home": Stats{
 			TotalTenders: 72742, TotalAwards: 14343, TotalValue: 980000000,
-			BySource:     []SourceCount{{Source: "data.gov.cy", Count: 58000}, {Source: "TED", Count: 14343}},
+			OpenTenderCount:      42,
+			BySource:             []SourceCount{{Source: "data.gov.cy", Count: 58000}, {Source: "TED", Count: 14343}},
+			OpenTenderCategories: []OpenTenderCategory{{Code: cpvDiv, Count: 12}},
+			LatestOpenTenders: []TenderRow{{
+				ID: 99, Title: "Προμήθεια φαρμάκων", AuthoritySlug: "dimos-lemesou", AuthorityName: "Δήμος Λεμεσού",
+				CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date, Deadline: &date, Source: "ted",
+			}},
 			RecentAwards: []AwardRow{award},
 		},
 		"authorities": []EntitySummary{entity},
@@ -91,6 +97,31 @@ func TestPageTemplatesRenderInBothLanguages(t *testing.T) {
 					t.Fatalf("%s (%s): missing language switcher", page, lang)
 				}
 			})
+		}
+	}
+}
+
+func TestHomeRendersOpenTenderNavigation(t *testing.T) {
+	templates, err := loadTemplates("../../templates")
+	if err != nil {
+		t.Fatalf("loadTemplates: %v", err)
+	}
+
+	r := httptest.NewRequest("GET", "/?lang=en", nil)
+	var buf bytes.Buffer
+	if err := templates["home"].ExecuteTemplate(&buf, "layout", newPage(LangEN, r, fakePages()["home"])); err != nil {
+		t.Fatalf("execute home: %v", err)
+	}
+
+	out := buf.String()
+	for _, want := range []string{
+		"Latest open tenders",
+		`href="/diagonismoi?cpv=45000000"`,
+		`href="/tender/99"`,
+		"View all open tenders (42)",
+	} {
+		if !strings.Contains(out, want) {
+			t.Errorf("home output missing %q", want)
 		}
 	}
 }
