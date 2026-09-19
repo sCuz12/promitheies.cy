@@ -6,7 +6,12 @@ primary_region = "fra"
 [env]
   HTTP_ADDR = ":8080"
 
+[processes]
+  web = "./server"
+  cron = "supercronic /app/crontab"
+
 [http_service]
+  processes = ["web"]
   internal_port = 8080
   force_https = true
   auto_stop_machines = "stop"
