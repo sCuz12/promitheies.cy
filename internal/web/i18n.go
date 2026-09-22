@@ -48,11 +48,18 @@ type Page struct {
 	Data     any
 	path     string
 	rawQuery string
+	newsletterResult string
 }
 
 func newPage(lang Lang, r *http.Request, data any) Page {
-	return Page{Lang: lang, Data: data, path: r.URL.Path, rawQuery: r.URL.RawQuery}
+	return Page{
+		Lang: lang, Data: data, path: r.URL.Path, rawQuery: r.URL.RawQuery,
+		newsletterResult: r.URL.Query().Get("newsletter"),
+	}
 }
+
+func (p Page) NewsletterJoined() bool  { return p.newsletterResult == "joined" }
+func (p Page) NewsletterInvalid() bool { return p.newsletterResult == "invalid" }
 
 // T returns the UI string for key in the page's language.
 func (p Page) T(key string) string { return T(p.Lang, key) }
@@ -153,6 +160,34 @@ var strings_ = map[string]map[Lang]string{
 		LangEL: "Λάβετε alerts στο Telegram",
 		LangEN: "Get alerts on Telegram",
 	},
+	"newsletter.kicker": {
+		LangEL: "Δωρεάν εβδομαδιαία ενημέρωση",
+		LangEN: "Free weekly digest",
+	},
+	"newsletter.title": {
+		LangEL: "Όλοι οι νέοι διαγωνισμοί. Ένα email. Κάθε εβδομάδα.",
+		LangEN: "Every new tender. One email. Every week.",
+	},
+	"newsletter.body": {
+		LangEL: "Λάβετε τους νέους διαγωνισμούς που εντοπίζει το Symvaseis.cy, με προθεσμίες, αξίες και συνδέσμους στις επίσημες προκηρύξεις.",
+		LangEN: "Get the new tenders tracked by Symvaseis.cy, with deadlines, values and links to the official notices.",
+	},
+	"newsletter.email":  {LangEL: "Email", LangEN: "Email"},
+	"newsletter.placeholder": {LangEL: "name@example.com", LangEN: "name@example.com"},
+	"newsletter.submit": {LangEL: "Εγγραφή δωρεάν", LangEN: "Join free"},
+	"newsletter.consent": {
+		LangEL: "Με την εγγραφή συμφωνείτε να λαμβάνετε την εβδομαδιαία ενημέρωση. Μπορείτε να διαγραφείτε οποτεδήποτε.",
+		LangEN: "By joining, you agree to receive the weekly digest. You can unsubscribe at any time.",
+	},
+	"newsletter.success": {
+		LangEL: "Είστε στη λίστα. Θα σας ενημερώσουμε μόλις ξεκινήσει η εβδομαδιαία αποστολή.",
+		LangEN: "You're on the list. We'll let you know when the weekly digest launches.",
+	},
+	"newsletter.invalid": {
+		LangEL: "Εισάγετε μια έγκυρη διεύθυνση email.",
+		LangEN: "Enter a valid email address.",
+	},
+	"newsletter.website": {LangEL: "Ιστότοπος", LangEN: "Website"},
 	"home.open.kicker":           {LangEL: "Ευκαιρίες τώρα", LangEN: "Opportunities now"},
 	"home.open.title":            {LangEL: "Νέοι ανοιχτοί διαγωνισμοί", LangEN: "Latest open tenders"},
 	"home.open.intro":            {LangEL: "Βρείτε ενεργές ευκαιρίες και μεταβείτε απευθείας στον τομέα που σας ενδιαφέρει.", LangEN: "Find active opportunities and jump straight to the sector relevant to you."},

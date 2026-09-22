@@ -32,6 +32,33 @@
     {{range .Data.BySource}}<span class="source-pill">{{.Source}}: {{.Count | commas}}</span>{{end}}
   </div>
 </section>
+
+<section class="newsletter-card" id="weekly-digest" aria-labelledby="newsletter-title">
+  <div class="newsletter-copy">
+    <span class="newsletter-kicker">{{.T "newsletter.kicker"}}</span>
+    <h2 id="newsletter-title">{{.T "newsletter.title"}}</h2>
+    <p>{{.T "newsletter.body"}}</p>
+  </div>
+  <div class="newsletter-action">
+    {{if .NewsletterJoined}}
+      <p class="newsletter-notice newsletter-notice-success" role="status">{{.T "newsletter.success"}}</p>
+    {{else}}
+      {{if .NewsletterInvalid}}<p class="newsletter-notice newsletter-notice-error" role="alert">{{.T "newsletter.invalid"}}</p>{{end}}
+      <form class="newsletter-form" method="post" action="/newsletter/subscribe">
+        <label for="newsletter-email">{{.T "newsletter.email"}}</label>
+        <div class="newsletter-form-row">
+          <input id="newsletter-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="{{.T "newsletter.placeholder"}}" required>
+          <button type="submit">{{.T "newsletter.submit"}}</button>
+        </div>
+        <div class="newsletter-honeypot" aria-hidden="true">
+          <label for="newsletter-website">{{.T "newsletter.website"}}</label>
+          <input id="newsletter-website" name="website" type="text" tabindex="-1" autocomplete="off">
+        </div>
+        <p class="newsletter-consent">{{.T "newsletter.consent"}}</p>
+      </form>
+    {{end}}
+  </div>
+</section>
   
 <section class="opportunities-section">
   <div class="section-heading">

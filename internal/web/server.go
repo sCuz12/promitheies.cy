@@ -1,6 +1,7 @@
 package web
 
 import (
+	"context"
 	"html/template"
 	"net/http"
 
@@ -8,9 +9,10 @@ import (
 )
 
 type Server struct {
-	pool      *pgxpool.Pool
-	templates map[string]*template.Template
-	mux       *http.ServeMux
+	pool               *pgxpool.Pool
+	templates          map[string]*template.Template
+	mux                *http.ServeMux
+	storeNewsletterSub func(context.Context, string, Lang) error
 }
 
 // NewServer loads templates from templatesDir and wires up all routes,
@@ -21,6 +23,9 @@ func NewServer(pool *pgxpool.Pool, templatesDir, staticDir string) (*Server, err
 		return nil, err
 	}
 	s := &Server{pool: pool, templates: templates}
+	s.storeNewsletterSub = func(ctx context.Context, email string, lang Lang) error {
+		return StoreNewsletterSubscriber(ctx, pool, email, lang)
+	}
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /{$}", s.handleHome)
@@ -31,6 +36,7 @@ func NewServer(pool *pgxpool.Pool, templatesDir, staticDir string) (*Server, err
 	mux.HandleFunc("GET /tender/{id}", s.handleTender)
 	mux.HandleFunc("GET /diagonismoi", s.handleOpenTenders)
 	mux.HandleFunc("GET /search", s.handleSearch)
+	mux.HandleFunc("POST /newsletter/subscribe", s.handleNewsletterSubscribe)
 	mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
 
 	s.mux = mux
