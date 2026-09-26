@@ -35,6 +35,7 @@ func fakePages() map[string]any {
 				CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date, Deadline: &date, DaysRemaining: 2, Source: "ted", ExternalID: stringPtr("123456-2026"),
 			}},
 			RecentAwards: []AwardRow{award},
+			Sectors:      cpv.Sectors,
 		},
 		"authorities": []EntitySummary{entity},
 		"authority": &Authority{
