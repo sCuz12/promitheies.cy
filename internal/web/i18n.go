@@ -44,10 +44,10 @@ func (s *Server) resolveLang(w http.ResponseWriter, r *http.Request) Lang {
 // content block can render translated text via .T / .Tip, while page-specific
 // fields stay reachable under .Data.
 type Page struct {
-	Lang     Lang
-	Data     any
-	path     string
-	rawQuery string
+	Lang             Lang
+	Data             any
+	path             string
+	rawQuery         string
 	newsletterResult string
 }
 
@@ -172,9 +172,23 @@ var strings_ = map[string]map[Lang]string{
 		LangEL: "Λάβετε τους νέους διαγωνισμούς που εντοπίζει το Symvaseis.cy, με προθεσμίες, αξίες και συνδέσμους στις επίσημες προκηρύξεις.",
 		LangEN: "Get the new tenders tracked by Symvaseis.cy, with deadlines, values and links to the official notices.",
 	},
-	"newsletter.email":  {LangEL: "Email", LangEN: "Email"},
+	"newsletter.email":       {LangEL: "1. Email", LangEN: "1. Email"},
 	"newsletter.placeholder": {LangEL: "name@example.com", LangEN: "name@example.com"},
-	"newsletter.submit": {LangEL: "Εγγραφή δωρεάν", LangEN: "Join free"},
+	"newsletter.sectors_label": {
+		LangEL: "2. Ποιοι τομείς σας ενδιαφέρουν; (προαιρετικό)",
+		LangEN: "2. Which sectors interest you? (optional)",
+	},
+	"newsletter.sectors_hint": {
+		LangEL: "Θα φιλτράρουμε αυτόματα τους διαγωνισμούς σε αυτούς τους τομείς (CPV). Αφήστε το κενό για όλους τους τομείς.",
+		LangEN: "We'll automatically filter tenders to these sectors (CPV). Leave blank for every sector.",
+	},
+	"newsletter.min_value_label": {
+		LangEL: "3. Ελάχιστη αξία σύμβασης",
+		LangEN: "3. Minimum contract value",
+	},
+	"newsletter.min_value.any":          {LangEL: "Οποιαδήποτε αξία", LangEN: "Any value"},
+	"newsletter.min_value.eu_threshold": {LangEL: "όριο ΕΕ", LangEN: "EU threshold"},
+	"newsletter.submit":                 {LangEL: "Εγγραφή δωρεάν", LangEN: "Join free"},
 	"newsletter.consent": {
 		LangEL: "Με την εγγραφή συμφωνείτε να λαμβάνετε την εβδομαδιαία ενημέρωση. Μπορείτε να διαγραφείτε οποτεδήποτε.",
 		LangEN: "By joining, you agree to receive the weekly digest. You can unsubscribe at any time.",
@@ -187,7 +201,7 @@ var strings_ = map[string]map[Lang]string{
 		LangEL: "Εισάγετε μια έγκυρη διεύθυνση email.",
 		LangEN: "Enter a valid email address.",
 	},
-	"newsletter.website": {LangEL: "Ιστότοπος", LangEN: "Website"},
+	"newsletter.website":         {LangEL: "Ιστότοπος", LangEN: "Website"},
 	"home.open.kicker":           {LangEL: "Ευκαιρίες τώρα", LangEN: "Opportunities now"},
 	"home.open.title":            {LangEL: "Νέοι ανοιχτοί διαγωνισμοί", LangEN: "Latest open tenders"},
 	"home.open.intro":            {LangEL: "Βρείτε ενεργές ευκαιρίες και μεταβείτε απευθείας στον τομέα που σας ενδιαφέρει.", LangEN: "Find active opportunities and jump straight to the sector relevant to you."},

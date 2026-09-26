@@ -45,9 +45,38 @@
     {{else}}
       {{if .NewsletterInvalid}}<p class="newsletter-notice newsletter-notice-error" role="alert">{{.T "newsletter.invalid"}}</p>{{end}}
       <form class="newsletter-form" method="post" action="/newsletter/subscribe">
-        <label for="newsletter-email">{{.T "newsletter.email"}}</label>
-        <div class="newsletter-form-row">
-          <input id="newsletter-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="{{.T "newsletter.placeholder"}}" required>
+        <div class="wizard-step">
+          <label for="newsletter-email">{{.T "newsletter.email"}}</label>
+          <div class="newsletter-form-row">
+            <input id="newsletter-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="{{.T "newsletter.placeholder"}}" required>
+          </div>
+        </div>
+
+        <fieldset class="wizard-step wizard-sectors">
+          <legend>{{.T "newsletter.sectors_label"}}</legend>
+          <p class="wizard-hint">{{.T "newsletter.sectors_hint"}}</p>
+          <div class="sector-grid">
+            {{$p := .}}
+            {{range .Data.Sectors}}
+              <label class="sector-option">
+                <input type="checkbox" name="sector" value="{{.Key}}">
+                <span>{{sectorName $p.Lang .}}</span>
+              </label>
+            {{end}}
+          </div>
+        </fieldset>
+
+        <div class="wizard-step">
+          <label for="newsletter-min-value">{{.T "newsletter.min_value_label"}}</label>
+          <select id="newsletter-min-value" name="min_value">
+            <option value="">{{.T "newsletter.min_value.any"}}</option>
+            <option value="25000">€25,000+</option>
+            <option value="140000">€140,000+ ({{.T "newsletter.min_value.eu_threshold"}})</option>
+            <option value="500000">€500,000+</option>
+          </select>
+        </div>
+
+        <div class="newsletter-form-row newsletter-submit-row">
           <button type="submit">{{.T "newsletter.submit"}}</button>
         </div>
         <div class="newsletter-honeypot" aria-hidden="true">
