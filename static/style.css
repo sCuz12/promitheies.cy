@@ -426,6 +426,31 @@ h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
   cursor: pointer;
 }
 .sector-option input { flex-shrink: 0; }
+.sector-details { margin: 0; }
+.sector-summary {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .5rem 0;
+  color: #E8AA85;
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.sector-summary::-webkit-details-marker { display: none; }
+.sector-summary::before {
+  content: "▸";
+  display: inline-block;
+  transition: transform .15s ease;
+}
+.sector-details[open] .sector-summary::before { transform: rotate(90deg); }
+.sector-details[open] .sector-summary { margin-bottom: .3rem; }
+.sector-summary:hover { color: var(--paper-raised); }
 .newsletter-submit-row { margin-top: .2rem; }
 #newsletter-min-value {
   width: 100%;

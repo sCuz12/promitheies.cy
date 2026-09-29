@@ -182,6 +182,10 @@ var strings_ = map[string]map[Lang]string{
 		LangEL: "Θα φιλτράρουμε αυτόματα τους διαγωνισμούς σε αυτούς τους τομείς (CPV). Αφήστε το κενό για όλους τους τομείς.",
 		LangEN: "We'll automatically filter tenders to these sectors (CPV). Leave blank for every sector.",
 	},
+	"newsletter.sectors_toggle": {
+		LangEL: "Επιλέξτε τομείς",
+		LangEN: "Choose sectors",
+	},
 	"newsletter.min_value_label": {
 		LangEL: "3. Ελάχιστη αξία σύμβασης",
 		LangEN: "3. Minimum contract value",

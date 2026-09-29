@@ -15,7 +15,7 @@ import (
 
 const (
 	newsletterDigestSource = "newsletter-digest"
-	newsletterWindowDays   = 100
+	newsletterWindowDays   = 8
 	newsletterTenderLimit  = 200
 )
 

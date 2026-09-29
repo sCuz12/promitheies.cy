@@ -55,15 +55,18 @@
         <fieldset class="wizard-step wizard-sectors">
           <legend>{{.T "newsletter.sectors_label"}}</legend>
           <p class="wizard-hint">{{.T "newsletter.sectors_hint"}}</p>
-          <div class="sector-grid">
-            {{$p := .}}
-            {{range .Data.Sectors}}
-              <label class="sector-option">
-                <input type="checkbox" name="sector" value="{{.Key}}">
-                <span>{{sectorName $p.Lang .}}</span>
-              </label>
-            {{end}}
-          </div>
+          <details class="sector-details">
+            <summary class="sector-summary">{{.T "newsletter.sectors_toggle"}}</summary>
+            <div class="sector-grid">
+              {{$p := .}}
+              {{range .Data.Sectors}}
+                <label class="sector-option">
+                  <input type="checkbox" name="sector" value="{{.Key}}">
+                  <span>{{sectorName $p.Lang .}}</span>
+                </label>
+              {{end}}
+            </div>
+          </details>
         </fieldset>
 
         <div class="wizard-step">
