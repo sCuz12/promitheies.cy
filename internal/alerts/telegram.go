@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"html"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -72,11 +73,24 @@ func FormatNewTenderMessage(t Tender, publicBaseURL string) string {
 		lines = append(lines, fmt.Sprintf("Source: %s <code>%s</code>", html.EscapeString(strings.ToUpper(t.Source)), html.EscapeString(t.ExternalID)))
 	}
 
+	if u := officialURL(t.Source, t.ExternalID); u != "" {
+		lines = append(lines, "Official notice: "+html.EscapeString(u))
+	}
+
 	if publicBaseURL != "" {
 		lines = append(lines, "View: "+html.EscapeString(tenderURL(publicBaseURL, t.ID)))
 	}
 
 	return strings.Join(lines, "\n")
+}
+
+// officialURL returns the link to the tender on its originating portal, or
+// "" when the source has no known public notice page.
+func officialURL(source, externalID string) string {
+	if !strings.EqualFold(source, "ted") || externalID == "" {
+		return ""
+	}
+	return "https://ted.europa.eu/en/notice/-/detail/" + url.PathEscape(externalID)
 }
 
 func tenderURL(publicBaseURL string, id int64) string {
