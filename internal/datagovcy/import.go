@@ -21,8 +21,8 @@ const Source = "datagovcy"
 // value). Treated the same as a blank contractor name: the tender is still
 // imported, just without an award row.
 var placeholderContractorNames = map[string]bool{
-	"ΟΙΚΟΝΟΜΙΚΟΣ ΦΟΡΕΑΣ": true,
-	"Αγορές μέσω Πρεσβείας της Κυπριακής Δημοκρατίας": true,
+	"ΟΙΚΟΝΟΜΙΚΟΣ ΦΟΡΕΑΣ":                                   true,
+	"Αγορές μέσω Πρεσβείας της Κυπριακής Δημοκρατίας":      true,
 	"Γενικό Λογιστήριο της Δημοκρατίας (Παρατηρητής/Test)": true,
 }
 

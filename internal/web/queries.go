@@ -20,6 +20,9 @@ type Stats struct {
 	OpenTenderCategories []OpenTenderCategory
 	LatestOpenTenders    []TenderRow
 	RecentAwards         []AwardRow
+	// Sectors powers the newsletter sector-onboarding wizard on this page;
+	// it's static reference data, not queried from the database.
+	Sectors []cpv.Sector
 }
 
 type SourceCount struct {
@@ -131,6 +134,8 @@ func GetStats(ctx context.Context, pool *pgxpool.Pool) (Stats, error) {
 	`).Scan(&s.OpenTenderCount); err != nil {
 		return s, fmt.Errorf("count open tenders: %w", err)
 	}
+
+	s.Sectors = cpv.Sectors
 
 	return s, nil
 }

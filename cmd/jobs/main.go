@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/georgehadjisavvas/promitheies-cy/internal/cpv"
 	"github.com/georgehadjisavvas/promitheies-cy/internal/db"
@@ -21,7 +22,7 @@ func main() {
 	}
 
 	if len(os.Args) < 2 {
-		log.Fatal("usage: jobs <seed-cpv>")
+		log.Fatal("usage: jobs <seed-cpv|newsletter-digest>")
 	}
 
 	ctx := context.Background()
@@ -41,8 +42,39 @@ func main() {
 		if err := seedCPV(ctx, pool); err != nil {
 			log.Fatalf("seed-cpv: %v", err)
 		}
+	case "newsletter-digest":
+		if err := runNewsletterDigest(ctx, pool); err != nil {
+			log.Fatalf("newsletter-digest: %v", err)
+		}
 	default:
 		log.Fatalf("unknown command %q", os.Args[1])
+	}
+}
+
+// startIngestRun and finishIngestRun mirror the identical helpers in
+// cmd/ingest-ted/main.go; copied rather than shared since these are two
+// separate `main` packages and it's not worth extracting a package for two
+// call sites. They record job runs in the existing ingest_runs table,
+// repurposed here for non-ingest jobs: for newsletter-digest,
+// records_processed = subscribers processed and records_inserted =
+// successful sends.
+func startIngestRun(ctx context.Context, pool *pgxpool.Pool, source string) (int64, error) {
+	var id int64
+	err := pool.QueryRow(ctx,
+		`INSERT INTO ingest_runs (source, started_at, status) VALUES ($1, now(), 'running') RETURNING id`,
+		source,
+	).Scan(&id)
+	return id, err
+}
+
+func finishIngestRun(ctx context.Context, pool *pgxpool.Pool, id int64, processed, inserted int, status, errMsg string) {
+	_, err := pool.Exec(ctx, `
+		UPDATE ingest_runs
+		SET finished_at = $2, records_processed = $3, records_inserted = $4, status = $5, error = NULLIF($6, '')
+		WHERE id = $1
+	`, id, time.Now(), processed, inserted, status, errMsg)
+	if err != nil {
+		log.Printf("warning: failed to record ingest_run %d: %v", id, err)
 	}
 }
 

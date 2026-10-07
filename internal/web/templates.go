@@ -16,8 +16,9 @@ var funcMap = template.FuncMap{
 	"euro": func(v float64) string {
 		return groupThousands(strconv.FormatFloat(v, 'f', 0, 64))
 	},
-	"inc":     func(i int) int { return i + 1 },
-	"cpvName": func(lang Lang, code string) string { return cpv.NameLang(string(lang), code) },
+	"inc":        func(i int) int { return i + 1 },
+	"cpvName":    func(lang Lang, code string) string { return cpv.NameLang(string(lang), code) },
+	"sectorName": func(lang Lang, s cpv.Sector) string { return s.NameLang(string(lang)) },
 	"sourceURL": func(lang Lang, source string, externalID *string) string {
 		if !strings.EqualFold(source, "ted") || externalID == nil || *externalID == "" {
 			return ""

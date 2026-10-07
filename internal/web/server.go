@@ -12,7 +12,7 @@ type Server struct {
 	pool               *pgxpool.Pool
 	templates          map[string]*template.Template
 	mux                *http.ServeMux
-	storeNewsletterSub func(context.Context, string, Lang) error
+	storeNewsletterSub func(context.Context, string, Lang, []string, *float64) error
 }
 
 // NewServer loads templates from templatesDir and wires up all routes,
@@ -23,8 +23,8 @@ func NewServer(pool *pgxpool.Pool, templatesDir, staticDir string) (*Server, err
 		return nil, err
 	}
 	s := &Server{pool: pool, templates: templates}
-	s.storeNewsletterSub = func(ctx context.Context, email string, lang Lang) error {
-		return StoreNewsletterSubscriber(ctx, pool, email, lang)
+	s.storeNewsletterSub = func(ctx context.Context, email string, lang Lang, cpvDivisions []string, minValue *float64) error {
+		return StoreNewsletterSubscriber(ctx, pool, email, lang, cpvDivisions, minValue)
 	}
 
 	mux := http.NewServeMux()

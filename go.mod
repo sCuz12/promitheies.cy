@@ -6,6 +6,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/jackc/pgx/v5 v5.10.0
 	github.com/joho/godotenv v1.5.1
+	github.com/mailtrap/mailtrap-go v0.3.0
 	golang.org/x/text v0.41.0
 )
 

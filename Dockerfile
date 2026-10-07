@@ -6,7 +6,8 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/server ./cmd/server && \
-    CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/ingest-ted ./cmd/ingest-ted
+    CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/ingest-ted ./cmd/ingest-ted && \
+    CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o /out/jobs ./cmd/jobs
 
 FROM alpine:3.20 AS supercronic
 ARG TARGETARCH
@@ -27,6 +28,7 @@ RUN apk add --no-cache ca-certificates tzdata && \
 WORKDIR /app
 COPY --from=build --chown=app /out/server ./server
 COPY --from=build --chown=app /out/ingest-ted ./ingest-ted
+COPY --from=build --chown=app /out/jobs ./jobs
 COPY --from=supercronic --chown=app /supercronic /usr/local/bin/supercronic
 COPY --chown=app templates ./templates
 COPY --chown=app static ./static

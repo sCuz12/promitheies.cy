@@ -1,7 +1,7 @@
 include .env
 export
 
-.PHONY: up down migrate-up migrate-down build run test seed ingest-ted ingest-datagovcy distribute
+.PHONY: up down migrate-up migrate-down build run test seed ingest-ted ingest-datagovcy distribute newsletter-digest
 
 up:
 	docker compose up -d
@@ -42,3 +42,6 @@ ingest-datagovcy:
 
 distribute:
 	go run ./cmd/distribute
+
+newsletter-digest:
+	go run ./cmd/jobs newsletter-digest
