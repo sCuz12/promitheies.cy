@@ -20,14 +20,10 @@ const (
 )
 
 // newMailerFromEnv builds the email.Mailer selected by EMAIL_PROVIDER
-// (default "resend"), reading that provider's own credential env vars. To
-// add another provider (Brevo, ...), give it its own client type in
-// internal/email implementing email.Mailer, then add a case for it here.
-// Missing credentials or an unrecognized provider are a hard failure: this
-// job's entire purpose is sending email, so a silent no-op every week would
-// be a worse failure mode than a loud cron failure.
+// (default "resend"), reading that provider's own credential env vars.
 func newMailerFromEnv(from string) email.Mailer {
 	provider := os.Getenv("EMAIL_PROVIDER")
+
 	if provider == "" {
 		provider = "resend"
 	}
@@ -51,6 +47,12 @@ func newMailerFromEnv(from string) email.Mailer {
 			log.Fatalf("build mailtrap client: %v", err)
 		}
 		return mailer
+	case "brevo":
+		apiKey := os.Getenv("BREVO_API_KEY")
+		if apiKey == "" {
+			log.Fatal("BREVO_API_KEY is not set")
+		}
+		return email.NewBrevoClient(apiKey, from)
 	default:
 		log.Fatalf("unsupported EMAIL_PROVIDER %q", provider)
 		return nil
@@ -74,6 +76,7 @@ func runNewsletterDigest(ctx context.Context, pool *pgxpool.Pool) error {
 	}
 
 	subscribers, err := digest.LoadSubscribers(ctx, pool)
+
 	if err != nil {
 		finishIngestRun(ctx, pool, runID, 0, 0, "failed", err.Error())
 		return fmt.Errorf("load subscribers: %w", err)
