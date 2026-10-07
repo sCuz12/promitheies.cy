@@ -11,28 +11,30 @@ var _ Mailer = (*MailtrapClient)(nil)
 
 // MailtrapClient sends transactional emails via the Mailtrap Email Sending
 // API (github.com/mailtrap/mailtrap-go) from a single pre-configured "from"
-// address.
+// address and display name.
 type MailtrapClient struct {
-	client *mailtrap.Client
-	from   string
+	client   *mailtrap.Client
+	from     string
+	fromName string
 }
 
-// NewMailtrapClient builds a MailtrapClient for the given Mailtrap API token
-// and "from" address. opts are passed through to mailtrap.NewClient, e.g.
-// mailtrap.WithSandbox(true) plus mailtrap.WithSandboxID(id) to send into a
-// sandbox inbox instead of delivering real email.
-func NewMailtrapClient(apiKey, from string, opts ...mailtrap.Option) (*MailtrapClient, error) {
+// NewMailtrapClient builds a MailtrapClient for the given Mailtrap API
+// token, "from" address, and display name (fromName may be empty). opts are
+// passed through to mailtrap.NewClient, e.g. mailtrap.WithSandbox(true)
+// plus mailtrap.WithSandboxID(id) to send into a sandbox inbox instead of
+// delivering real email.
+func NewMailtrapClient(apiKey, from, fromName string, opts ...mailtrap.Option) (*MailtrapClient, error) {
 	client, err := mailtrap.NewClient(apiKey, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("build mailtrap client: %w", err)
 	}
-	return &MailtrapClient{client: client, from: from}, nil
+	return &MailtrapClient{client: client, from: from, fromName: fromName}, nil
 }
 
 // Send delivers one HTML email with a plaintext fallback to one recipient.
 func (c *MailtrapClient) Send(ctx context.Context, to, subject, html, text string) error {
 	out, _, err := c.client.Send(ctx, &mailtrap.SendRequest{
-		From:    mailtrap.Address{Email: c.from},
+		From:    mailtrap.Address{Email: c.from, Name: c.fromName},
 		To:      []mailtrap.Address{{Email: to}},
 		Subject: subject,
 		HTML:    html,

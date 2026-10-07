@@ -21,7 +21,7 @@ func TestResendClientSendPostsExpectedRequest(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := NewResendClient("test-key", "digest@promitheies.cy")
+	client := NewResendClient("test-key", "digest@promitheies.cy", "Symvaseis.Cy")
 	client.baseURL = server.URL
 
 	err := client.Send(context.Background(), "user@example.com", "Subject", "<p>hi</p>", "hi")
@@ -32,8 +32,8 @@ func TestResendClientSendPostsExpectedRequest(t *testing.T) {
 	if want := "Bearer test-key"; gotAuth != want {
 		t.Errorf("Authorization header = %q, want %q", gotAuth, want)
 	}
-	if gotBody.From != "digest@promitheies.cy" {
-		t.Errorf("From = %q, want %q", gotBody.From, "digest@promitheies.cy")
+	if want := "Symvaseis.Cy <digest@promitheies.cy>"; gotBody.From != want {
+		t.Errorf("From = %q, want %q", gotBody.From, want)
 	}
 	if len(gotBody.To) != 1 || gotBody.To[0] != "user@example.com" {
 		t.Errorf("To = %v, want [user@example.com]", gotBody.To)
@@ -50,7 +50,7 @@ func TestResendClientSendReturnsErrorOnNonSuccessResponse(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := NewResendClient("test-key", "digest@promitheies.cy")
+	client := NewResendClient("test-key", "digest@promitheies.cy", "")
 	client.baseURL = server.URL
 
 	err := client.Send(context.Background(), "not-an-email", "Subject", "<p>hi</p>", "hi")

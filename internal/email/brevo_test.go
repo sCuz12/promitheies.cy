@@ -22,7 +22,7 @@ func TestBrevoClientSendPostsExpectedRequest(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := NewBrevoClient("test-key", "digest@promitheies.cy")
+	client := NewBrevoClient("test-key", "digest@promitheies.cy", "Symvaseis.Cy")
 	client.baseURL = server.URL
 
 	err := client.Send(context.Background(), "user@example.com", "Subject", "<p>hi</p>", "hi")
@@ -33,8 +33,8 @@ func TestBrevoClientSendPostsExpectedRequest(t *testing.T) {
 	if gotAPIKey != "test-key" {
 		t.Errorf("api-key header = %q, want %q", gotAPIKey, "test-key")
 	}
-	if gotBody.Sender.Email != "digest@promitheies.cy" {
-		t.Errorf("Sender = %q, want %q", gotBody.Sender.Email, "digest@promitheies.cy")
+	if gotBody.Sender.Email != "digest@promitheies.cy" || gotBody.Sender.Name != "Symvaseis.Cy" {
+		t.Errorf("Sender = %+v, want {Email:digest@promitheies.cy Name:Symvaseis.Cy}", gotBody.Sender)
 	}
 	if len(gotBody.To) != 1 || gotBody.To[0].Email != "user@example.com" {
 		t.Errorf("To = %v, want [user@example.com]", gotBody.To)
@@ -51,7 +51,7 @@ func TestBrevoClientSendReturnsErrorOnNonSuccessResponse(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := NewBrevoClient("test-key", "digest@promitheies.cy")
+	client := NewBrevoClient("test-key", "digest@promitheies.cy", "")
 	client.baseURL = server.URL
 
 	err := client.Send(context.Background(), "not-an-email", "Subject", "<p>hi</p>", "hi")

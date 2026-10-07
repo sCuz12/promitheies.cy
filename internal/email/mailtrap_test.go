@@ -24,7 +24,7 @@ func TestMailtrapClientSendPostsExpectedRequest(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client, err := NewMailtrapClient("test-token", "digest@promitheies.cy", mailtrap.WithBaseURL(mailtrap.HostSend, server.URL))
+	client, err := NewMailtrapClient("test-token", "digest@promitheies.cy", "Symvaseis.Cy", mailtrap.WithBaseURL(mailtrap.HostSend, server.URL))
 	if err != nil {
 		t.Fatalf("NewMailtrapClient returned error: %v", err)
 	}
@@ -37,8 +37,8 @@ func TestMailtrapClientSendPostsExpectedRequest(t *testing.T) {
 	if want := "Bearer test-token"; gotAuth != want {
 		t.Errorf("Authorization header = %q, want %q", gotAuth, want)
 	}
-	if gotBody.From.Email != "digest@promitheies.cy" {
-		t.Errorf("From = %q, want %q", gotBody.From.Email, "digest@promitheies.cy")
+	if gotBody.From.Email != "digest@promitheies.cy" || gotBody.From.Name != "Symvaseis.Cy" {
+		t.Errorf("From = %+v, want {Email:digest@promitheies.cy Name:Symvaseis.Cy}", gotBody.From)
 	}
 	if len(gotBody.To) != 1 || gotBody.To[0].Email != "user@example.com" {
 		t.Errorf("To = %v, want [user@example.com]", gotBody.To)
@@ -56,7 +56,7 @@ func TestMailtrapClientSendReturnsErrorOnUnsuccessfulResponse(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client, err := NewMailtrapClient("test-token", "digest@promitheies.cy", mailtrap.WithBaseURL(mailtrap.HostSend, server.URL))
+	client, err := NewMailtrapClient("test-token", "digest@promitheies.cy", "", mailtrap.WithBaseURL(mailtrap.HostSend, server.URL))
 	if err != nil {
 		t.Fatalf("NewMailtrapClient returned error: %v", err)
 	}
