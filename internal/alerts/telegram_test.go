@@ -30,6 +30,7 @@ func TestFormatNewTenderMessageEscapesHTMLAndAddsLink(t *testing.T) {
 	assertContains(t, msg, "Published: 2026-08-31")
 	assertContains(t, msg, "CPV division: 45000000")
 	assertContains(t, msg, "Source: TED <code>123</code>")
+	assertContains(t, msg, "Official notice: https://ted.europa.eu/en/notice/-/detail/123")
 	assertContains(t, msg, "https://symvaseis.cy/tender/42")
 }
 
