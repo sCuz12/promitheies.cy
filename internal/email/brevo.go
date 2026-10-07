@@ -12,27 +12,30 @@ import (
 var _ Mailer = (*BrevoClient)(nil)
 
 // BrevoClient sends transactional emails via the Brevo (formerly Sendinblue)
-// API from a single pre-configured "from" address.
+// API from a single pre-configured "from" address and display name.
 type BrevoClient struct {
-	baseURL string // overridable in tests; defaults to the real Brevo API
-	apiKey  string
-	from    string
-	http    *http.Client
+	baseURL  string // overridable in tests; defaults to the real Brevo API
+	apiKey   string
+	from     string
+	fromName string
+	http     *http.Client
 }
 
-// NewBrevoClient builds a BrevoClient for the given Brevo API key and "from"
-// address.
-func NewBrevoClient(apiKey, from string) *BrevoClient {
+// NewBrevoClient builds a BrevoClient for the given Brevo API key, "from"
+// address, and display name (fromName may be empty).
+func NewBrevoClient(apiKey, from, fromName string) *BrevoClient {
 	return &BrevoClient{
-		baseURL: "https://api.brevo.com/v3",
-		apiKey:  apiKey,
-		from:    from,
-		http:    &http.Client{Timeout: 10 * time.Second},
+		baseURL:  "https://api.brevo.com/v3",
+		apiKey:   apiKey,
+		from:     from,
+		fromName: fromName,
+		http:     &http.Client{Timeout: 10 * time.Second},
 	}
 }
 
 type brevoAddress struct {
 	Email string `json:"email"`
+	Name  string `json:"name,omitempty"`
 }
 
 type brevoSendRequest struct {
@@ -51,7 +54,7 @@ type brevoErrorResponse struct {
 // Send delivers one HTML email with a plaintext fallback to one recipient.
 func (c *BrevoClient) Send(ctx context.Context, to, subject, html, text string) error {
 	body, err := json.Marshal(brevoSendRequest{
-		Sender:      brevoAddress{Email: c.from},
+		Sender:      brevoAddress{Email: c.from, Name: c.fromName},
 		To:          []brevoAddress{{Email: to}},
 		Subject:     subject,
 		HTMLContent: html,

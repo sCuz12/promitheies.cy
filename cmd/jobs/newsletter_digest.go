@@ -21,7 +21,9 @@ const (
 
 // newMailerFromEnv builds the email.Mailer selected by EMAIL_PROVIDER
 // (default "resend"), reading that provider's own credential env vars.
-func newMailerFromEnv(from string) email.Mailer {
+// fromName is the display name shown alongside the from address (e.g.
+// "Symvaseis.Cy"); it comes from NEWSLETTER_FROM_NAME and may be empty.
+func newMailerFromEnv(from, fromName string) email.Mailer {
 	provider := os.Getenv("EMAIL_PROVIDER")
 
 	if provider == "" {
@@ -34,13 +36,13 @@ func newMailerFromEnv(from string) email.Mailer {
 		if apiKey == "" {
 			log.Fatal("RESEND_API_KEY is not set")
 		}
-		return email.NewResendClient(apiKey, from)
+		return email.NewResendClient(apiKey, from, fromName)
 	case "mailtrap":
 		apiKey := os.Getenv("MAILTRAP_API_TOKEN")
 		if apiKey == "" {
 			log.Fatal("MAILTRAP_API_TOKEN is not set")
 		}
-		mailer, err := email.NewMailtrapClient(apiKey, from,
+		mailer, err := email.NewMailtrapClient(apiKey, from, fromName,
 			mailtrap.WithSandbox(true),
 			mailtrap.WithSandboxID(923293))
 		if err != nil {
@@ -52,7 +54,7 @@ func newMailerFromEnv(from string) email.Mailer {
 		if apiKey == "" {
 			log.Fatal("BREVO_API_KEY is not set")
 		}
-		return email.NewBrevoClient(apiKey, from)
+		return email.NewBrevoClient(apiKey, from, fromName)
 	default:
 		log.Fatalf("unsupported EMAIL_PROVIDER %q", provider)
 		return nil
@@ -67,8 +69,9 @@ func runNewsletterDigest(ctx context.Context, pool *pgxpool.Pool) error {
 	if from == "" {
 		log.Fatal("NEWSLETTER_FROM_EMAIL is not set")
 	}
+	fromName := os.Getenv("NEWSLETTER_FROM_NAME")
 	publicBaseURL := os.Getenv("PUBLIC_BASE_URL")
-	mailer := newMailerFromEnv(from)
+	mailer := newMailerFromEnv(from, fromName)
 
 	runID, err := startIngestRun(ctx, pool, newsletterDigestSource)
 	if err != nil {

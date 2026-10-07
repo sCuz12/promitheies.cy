@@ -17,22 +17,24 @@ import (
 var _ Mailer = (*ResendClient)(nil)
 
 // ResendClient sends transactional emails via the Resend API from a single
-// pre-configured "from" address.
+// pre-configured "from" address and display name.
 type ResendClient struct {
-	baseURL string // overridable in tests; defaults to the real Resend API
-	apiKey  string
-	from    string
-	http    *http.Client
+	baseURL  string // overridable in tests; defaults to the real Resend API
+	apiKey   string
+	from     string
+	fromName string
+	http     *http.Client
 }
 
-// NewResendClient builds a ResendClient for the given Resend API key and
-// "from" address.
-func NewResendClient(apiKey, from string) *ResendClient {
+// NewResendClient builds a ResendClient for the given Resend API key,
+// "from" address, and display name (fromName may be empty).
+func NewResendClient(apiKey, from, fromName string) *ResendClient {
 	return &ResendClient{
-		baseURL: "https://api.resend.com",
-		apiKey:  apiKey,
-		from:    from,
-		http:    &http.Client{Timeout: 10 * time.Second},
+		baseURL:  "https://api.resend.com",
+		apiKey:   apiKey,
+		from:     from,
+		fromName: fromName,
+		http:     &http.Client{Timeout: 10 * time.Second},
 	}
 }
 
@@ -52,7 +54,7 @@ type resendErrorResponse struct {
 // Send delivers one HTML email with a plaintext fallback to one recipient.
 func (c *ResendClient) Send(ctx context.Context, to, subject, html, text string) error {
 	body, err := json.Marshal(resendSendRequest{
-		From:    c.from,
+		From:    formatFromAddress(c.fromName, c.from),
 		To:      []string{to},
 		Subject: subject,
 		HTML:    html,
