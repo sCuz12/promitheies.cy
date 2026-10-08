@@ -77,6 +77,9 @@ func StoreNewsletterSubscriber(ctx context.Context, pool *pgxpool.Pool, email st
 	if lang != LangEN {
 		lang = LangEL
 	}
+	if cpvDivisions == nil {
+		cpvDivisions = []string{}
+	}
 	_, err := pool.Exec(ctx, `
 		INSERT INTO newsletter_subscribers (email, language, cpv_divisions, min_value)
 		VALUES ($1, $2, $3, $4)

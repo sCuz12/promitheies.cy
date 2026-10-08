@@ -59,7 +59,7 @@ var sectorByKey = func() map[string]Sector {
 // The result is deduplicated but not sorted.
 func DivisionsForSectorKeys(keys []string) []string {
 	seen := make(map[string]bool)
-	var out []string
+	out := make([]string, 0)
 	for _, k := range keys {
 		sec, ok := sectorByKey[k]
 		if !ok {
