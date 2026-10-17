@@ -36,12 +36,11 @@ type tenderOut struct {
 }
 
 func registerTenders(s *mcp.Server, pool *pgxpool.Pool) {
-	readOnly := &mcp.ToolAnnotations{ReadOnlyHint: true}
-
 	mcp.AddTool(s, &mcp.Tool{
 		Name:        "search_tenders",
+		Title:       "Search Tenders",
 		Description: "Search all Cyprus public tenders (open and historical) by title, authority and CPV division. Newest first.",
-		Annotations: readOnly,
+		Annotations: readOnly("Search Tenders"),
 	}, func(ctx context.Context, _ *mcp.CallToolRequest, in searchTendersIn) (*mcp.CallToolResult, tendersOut, error) {
 		rows, err := web.SearchTenders(ctx, pool, in.Query, in.AuthoritySlug, in.CPVDivision, clampLimit(in.Limit))
 		return nil, tendersOut{Tenders: rows}, err
@@ -49,8 +48,9 @@ func registerTenders(s *mcp.Server, pool *pgxpool.Pool) {
 
 	mcp.AddTool(s, &mcp.Tool{
 		Name:        "list_open_tenders",
+		Title:       "List Open Tenders",
 		Description: "List currently open tender opportunities (deadline not yet passed) that businesses can still bid on. Newest first.",
-		Annotations: readOnly,
+		Annotations: readOnly("List Open Tenders"),
 	}, func(ctx context.Context, _ *mcp.CallToolRequest, in openTendersIn) (*mcp.CallToolResult, tendersOut, error) {
 		rows, err := web.ListOpenTenders(ctx, pool, in.Query, in.CPVDivision, clampLimit(in.Limit))
 		return nil, tendersOut{Tenders: rows}, err
@@ -58,8 +58,9 @@ func registerTenders(s *mcp.Server, pool *pgxpool.Pool) {
 
 	mcp.AddTool(s, &mcp.Tool{
 		Name:        "get_tender",
+		Title:       "Get Tender",
 		Description: "Get full details of one tender: authority, value, status, procedure type, deadline and source.",
-		Annotations: readOnly,
+		Annotations: readOnly("Get Tender"),
 	}, func(ctx context.Context, _ *mcp.CallToolRequest, in getTenderIn) (*mcp.CallToolResult, tenderOut, error) {
 		t, err := web.GetTender(ctx, pool, in.ID)
 		if err != nil {

@@ -26,12 +26,11 @@ type contractorOut struct {
 }
 
 func registerContractors(s *mcp.Server, pool *pgxpool.Pool) {
-	readOnly := &mcp.ToolAnnotations{ReadOnlyHint: true}
-
 	mcp.AddTool(s, &mcp.Tool{
 		Name:        "list_contractors",
+		Title:       "List Contractors",
 		Description: "List contractors that won public contracts, ranked by total awarded value.",
-		Annotations: readOnly,
+		Annotations: readOnly("List Contractors"),
 	}, func(ctx context.Context, _ *mcp.CallToolRequest, in listContractorsIn) (*mcp.CallToolResult, contractorsOut, error) {
 		rows, err := web.ListContractors(ctx, pool, clampLimit(in.Limit))
 		return nil, contractorsOut{Contractors: rows}, err
@@ -39,8 +38,9 @@ func registerContractors(s *mcp.Server, pool *pgxpool.Pool) {
 
 	mcp.AddTool(s, &mcp.Tool{
 		Name:        "get_contractor",
+		Title:       "Get Contractor",
 		Description: "Get a contractor's profile: total won, which authorities award them contracts, and recent awards.",
-		Annotations: readOnly,
+		Annotations: readOnly("Get Contractor"),
 	}, func(ctx context.Context, _ *mcp.CallToolRequest, in getContractorIn) (*mcp.CallToolResult, contractorOut, error) {
 		c, err := web.GetContractor(ctx, pool, in.Slug)
 		if err != nil {

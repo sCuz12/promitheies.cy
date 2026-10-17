@@ -32,6 +32,10 @@ func TestListTools(t *testing.T) {
 	var got []string
 	for _, tool := range res.Tools {
 		got = append(got, tool.Name)
+		// The Claude connectors directory rejects tools without these.
+		if tool.Annotations == nil || tool.Annotations.Title == "" || !tool.Annotations.ReadOnlyHint {
+			t.Errorf("tool %s: want annotations.title and readOnlyHint set, got %+v", tool.Name, tool.Annotations)
+		}
 	}
 	slices.Sort(got)
 	want := []string{"get_authority", "get_contractor", "get_tender", "list_authorities", "list_contractors", "list_open_tenders", "search_tenders"}

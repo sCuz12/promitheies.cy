@@ -26,12 +26,11 @@ type authorityOut struct {
 }
 
 func registerAuthorities(s *mcp.Server, pool *pgxpool.Pool) {
-	readOnly := &mcp.ToolAnnotations{ReadOnlyHint: true}
-
 	mcp.AddTool(s, &mcp.Tool{
 		Name:        "list_authorities",
+		Title:       "List Authorities",
 		Description: "List contracting authorities (ministries, municipalities, agencies) ranked by total awarded contract value.",
-		Annotations: readOnly,
+		Annotations: readOnly("List Authorities"),
 	}, func(ctx context.Context, _ *mcp.CallToolRequest, in listAuthoritiesIn) (*mcp.CallToolResult, authoritiesOut, error) {
 		rows, err := web.ListAuthorities(ctx, pool, clampLimit(in.Limit))
 		return nil, authoritiesOut{Authorities: rows}, err
@@ -39,8 +38,9 @@ func registerAuthorities(s *mcp.Server, pool *pgxpool.Pool) {
 
 	mcp.AddTool(s, &mcp.Tool{
 		Name:        "get_authority",
+		Title:       "Get Authority",
 		Description: "Get a contracting authority's spending profile: totals, top contractors, spend by CPV sector and recent awards.",
-		Annotations: readOnly,
+		Annotations: readOnly("Get Authority"),
 	}, func(ctx context.Context, _ *mcp.CallToolRequest, in getAuthorityIn) (*mcp.CallToolResult, authorityOut, error) {
 		a, err := web.GetAuthority(ctx, pool, in.Slug)
 		if err != nil {
