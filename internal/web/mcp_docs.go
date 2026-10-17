@@ -52,6 +52,10 @@ func MCPToolNames() []string {
 	return names
 }
 
+func (s *Server) handlePrivacy(w http.ResponseWriter, r *http.Request) {
+	s.render(w, r, "privacy", nil)
+}
+
 func (s *Server) handleMCPDocs(w http.ResponseWriter, r *http.Request) {
 	s.render(w, r, "mcp_docs", mcpDocsData{
 		URL:      requestBaseURL(r) + "/mcp",

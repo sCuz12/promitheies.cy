@@ -61,6 +61,7 @@ func fakePages() map[string]any {
 				CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date, Source: "ted",
 			}},
 		},
+		"privacy": nil,
 		"mcp_docs": mcpDocsData{
 			URL: "https://example.com/mcp", Tools: mcpToolDocs,
 			Examples: []string{"mcp.example.1", "mcp.example.2"},

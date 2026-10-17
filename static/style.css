@@ -1139,3 +1139,10 @@ h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
   .mcp-grid { grid-template-columns: 1fr; }
 }
 .footer-mcp { color: var(--ink-muted); font-size: .85rem; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- legal pages ---------- */
+
+.legal { max-width: 72ch; }
+.legal h3 { margin: 1.4rem 0 .4rem; font-family: var(--font-display); font-size: 1.1rem; }
+.legal p, .legal li { line-height: 1.65; }
+.legal ul { padding-left: 1.2rem; }
