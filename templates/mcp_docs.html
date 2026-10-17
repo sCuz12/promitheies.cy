@@ -1,0 +1,109 @@
+{{define "title"}}{{.T "title.mcp"}}{{end}}
+{{define "content"}}
+<p class="breadcrumb">{{.T "breadcrumb.docs"}} / MCP</p>
+<p class="eyebrow">{{.T "mcp.eyebrow"}}</p>
+<h1>{{.T "mcp.h1"}}</h1>
+<p class="page-subtitle">{{.T "mcp.sub"}}</p>
+
+<h2>{{.T "mcp.what.h"}}</h2>
+<p class="mcp-prose">{{.T "mcp.what.body"}}</p>
+
+<h2>{{.T "mcp.connect.h"}}</h2>
+<div class="mcp-snippet mcp-snippet-url">
+  <span class="mcp-snippet-label">{{.T "mcp.url.label"}}</span>
+  <pre class="code-block"><code>{{.Data.URL}}</code></pre>
+  <button type="button" class="copy-btn" data-copied="{{.T "mcp.copied"}}">{{.T "mcp.copy"}}</button>
+</div>
+
+<div class="mcp-grid">
+  <section class="mcp-card">
+    <h3>{{.T "mcp.claude.h"}}</h3>
+    <p>{{.T "mcp.claude.body"}}</p>
+  </section>
+
+  <section class="mcp-card">
+    <h3>{{.T "mcp.code.h"}}</h3>
+    <p>{{.T "mcp.code.body"}}</p>
+    <div class="mcp-snippet">
+      <pre class="code-block"><code>claude mcp add --transport http symvaseis {{.Data.URL}}</code></pre>
+      <button type="button" class="copy-btn" data-copied="{{.T "mcp.copied"}}">{{.T "mcp.copy"}}</button>
+    </div>
+  </section>
+
+  <section class="mcp-card">
+    <h3>{{.T "mcp.cursor.h"}}</h3>
+    <p>{{.T "mcp.cursor.body"}}</p>
+    <div class="mcp-snippet">
+      <pre class="code-block"><code>{
+  "mcpServers": {
+    "symvaseis": {
+      "url": "{{.Data.URL}}"
+    }
+  }
+}</code></pre>
+      <button type="button" class="copy-btn" data-copied="{{.T "mcp.copied"}}">{{.T "mcp.copy"}}</button>
+    </div>
+  </section>
+
+  <section class="mcp-card">
+    <h3>{{.T "mcp.inspector.h"}}</h3>
+    <p>{{.T "mcp.inspector.body"}}</p>
+    <div class="mcp-snippet">
+      <pre class="code-block"><code>npx @modelcontextprotocol/inspector</code></pre>
+      <button type="button" class="copy-btn" data-copied="{{.T "mcp.copied"}}">{{.T "mcp.copy"}}</button>
+    </div>
+  </section>
+</div>
+
+<h2>{{.T "mcp.examples.h"}}</h2>
+<ul class="mcp-examples">
+  {{range .Data.Examples}}<li>“{{$.T .}}”</li>{{end}}
+</ul>
+
+<h2>{{.T "mcp.tools.h"}}</h2>
+<p class="mcp-prose">{{.T "mcp.tools.intro"}}</p>
+<div class="mcp-tools">
+  {{range .Data.Tools}}
+  <article class="mcp-tool" id="tool-{{.Name}}">
+    <h3><code>{{.Name}}</code></h3>
+    <p>{{$.T (printf "mcp.tool.%s" .Name)}}</p>
+    <p class="mcp-params-label">{{$.T "mcp.tools.params"}}</p>
+    {{if .Params}}
+    <ul class="mcp-params">
+      {{range .Params}}
+      <li>
+        <code>{{.Name}}</code>
+        <span class="mcp-param-type">{{.Type}}{{if .Required}} · {{$.T "mcp.tools.required"}}{{end}}</span>
+        <span class="mcp-param-desc">{{$.T (printf "mcp.param.%s" .Name)}}</span>
+      </li>
+      {{end}}
+    </ul>
+    {{else}}
+    <p class="muted">{{$.T "mcp.tools.none"}}</p>
+    {{end}}
+  </article>
+  {{end}}
+</div>
+
+<h2>{{.T "mcp.notes.h"}}</h2>
+<ul class="mcp-notes">
+  <li>{{.T "mcp.notes.readonly"}}</li>
+  <li>{{.T "mcp.notes.rate"}}</li>
+  <li>{{.T "mcp.notes.data"}}</li>
+  <li>{{.T "mcp.notes.disclaimer"}}</li>
+</ul>
+
+<script>
+document.querySelectorAll(".copy-btn").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    var code = btn.parentElement.querySelector("code");
+    if (!code || !navigator.clipboard) return;
+    var label = btn.textContent;
+    navigator.clipboard.writeText(code.textContent).then(function () {
+      btn.textContent = btn.dataset.copied;
+      setTimeout(function () { btn.textContent = label; }, 1500);
+    });
+  });
+});
+</script>
+{{end}}

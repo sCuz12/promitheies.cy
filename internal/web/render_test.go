@@ -61,6 +61,10 @@ func fakePages() map[string]any {
 				CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date, Source: "ted",
 			}},
 		},
+		"mcp_docs": mcpDocsData{
+			URL: "https://example.com/mcp", Tools: mcpToolDocs,
+			Examples: []string{"mcp.example.1", "mcp.example.2"},
+		},
 		"search": searchPageData{
 			Query: "ασφαλτόστρωση", CPVDivision: cpvDiv, Divisions: cpv.Divisions,
 			Results: []TenderRow{{
@@ -152,5 +156,34 @@ func TestTenderRendersOfficialSourceLink(t *testing.T) {
 	}
 	if !strings.Contains(out, "2 ημέρες απομένουν") || !strings.Contains(out, "Λήγει σύντομα") {
 		t.Error("tender output missing localized deadline warning")
+	}
+}
+
+func TestMCPDocsRendersConnectionSnippets(t *testing.T) {
+	templates, err := loadTemplates("../../templates")
+	if err != nil {
+		t.Fatalf("loadTemplates: %v", err)
+	}
+	r := httptest.NewRequest("GET", "/docs/mcp?lang=en", nil)
+	var buf bytes.Buffer
+	if err := templates["mcp_docs"].ExecuteTemplate(&buf, "layout", newPage(LangEN, r, fakePages()["mcp_docs"])); err != nil {
+		t.Fatalf("execute mcp_docs: %v", err)
+	}
+	out := buf.String()
+	for _, want := range []string{
+		"claude mcp add --transport http symvaseis https://example.com/mcp",
+		`"url": "https://example.com/mcp"`,
+		`id="tool-search_tenders"`,
+		"Search all Cyprus public tenders",
+		"2-digit CPV division",
+		"HTTP 429",
+	} {
+		if !strings.Contains(out, want) {
+			t.Errorf("mcp_docs output missing %q", want)
+		}
+	}
+	// No untranslated keys may leak into the page.
+	if strings.Contains(out, "mcp.") && strings.Contains(out, ">mcp.") {
+		t.Errorf("mcp_docs output contains an untranslated key")
 	}
 }

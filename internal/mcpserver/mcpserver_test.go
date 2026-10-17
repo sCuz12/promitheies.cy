@@ -8,6 +8,8 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
+	"github.com/georgehadjisavvas/promitheies-cy/internal/web"
+
 	"github.com/georgehadjisavvas/promitheies-cy/internal/mcpserver"
 )
 
@@ -38,6 +40,13 @@ func TestListTools(t *testing.T) {
 		}
 	}
 	slices.Sort(got)
+	// The public docs page (internal/web/mcp_docs.go) lists tools by hand;
+	// fail if it drifts from what the server really registers.
+	docs := web.MCPToolNames()
+	slices.Sort(docs)
+	if !slices.Equal(got, docs) {
+		t.Fatalf("docs page tools = %v, server tools = %v", docs, got)
+	}
 	want := []string{"get_authority", "get_contractor", "get_tender", "list_authorities", "list_contractors", "list_open_tenders", "search_tenders"}
 	if !slices.Equal(got, want) {
 		t.Fatalf("tools = %v, want %v", got, want)

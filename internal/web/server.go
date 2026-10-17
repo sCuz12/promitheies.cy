@@ -36,6 +36,7 @@ func NewServer(pool *pgxpool.Pool, templatesDir, staticDir string) (*Server, err
 	mux.HandleFunc("GET /tender/{id}", s.handleTender)
 	mux.HandleFunc("GET /diagonismoi", s.handleOpenTenders)
 	mux.HandleFunc("GET /search", s.handleSearch)
+	mux.HandleFunc("GET /docs/mcp", s.handleMCPDocs)
 	mux.HandleFunc("POST /newsletter/subscribe", s.handleNewsletterSubscribe)
 	mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
 
