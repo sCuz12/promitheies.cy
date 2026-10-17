@@ -181,9 +181,9 @@ func recentAwards(ctx context.Context, pool *pgxpool.Pool, limit int, authorityI
 	return out, rows.Err()
 }
 
-// ListAuthorities returns every authority with at least one award, ordered
-// by total award value descending.
-func ListAuthorities(ctx context.Context, pool *pgxpool.Pool) ([]EntitySummary, error) {
+// ListAuthorities returns every authority with at least one award, ordered by
+// total award value descending. A limit <= 0 returns them all.
+func ListAuthorities(ctx context.Context, pool *pgxpool.Pool, limit int) ([]EntitySummary, error) {
 	rows, err := pool.Query(ctx, `
 		SELECT auth.id, auth.slug, coalesce(auth.canonical_name_el, auth.canonical_name_en, ''),
 		       coalesce(sum(a.value), 0), count(a.id)
@@ -192,7 +192,8 @@ func ListAuthorities(ctx context.Context, pool *pgxpool.Pool) ([]EntitySummary, 
 		JOIN awards a ON a.tender_id = t.id
 		GROUP BY auth.id
 		ORDER BY sum(a.value) DESC NULLS LAST
-	`)
+		LIMIT nullif($1::int, 0)
+	`, max(limit, 0))
 	if err != nil {
 		return nil, err
 	}

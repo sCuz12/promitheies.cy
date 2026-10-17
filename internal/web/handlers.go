@@ -18,7 +18,7 @@ func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleAuthorities(w http.ResponseWriter, r *http.Request) {
-	list, err := ListAuthorities(r.Context(), s.pool)
+	list, err := ListAuthorities(r.Context(), s.pool, 0)
 	if err != nil {
 		s.serverError(w, err)
 		return
