@@ -8,9 +8,12 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/georgehadjisavvas/promitheies-cy/internal/db"
 	"github.com/georgehadjisavvas/promitheies-cy/internal/envconfig"
+	"github.com/georgehadjisavvas/promitheies-cy/internal/mcpserver"
+	"github.com/georgehadjisavvas/promitheies-cy/internal/ratelimit"
 	"github.com/georgehadjisavvas/promitheies-cy/internal/web"
 )
 
@@ -41,8 +44,21 @@ func main() {
 		log.Fatalf("init server: %v", err)
 	}
 
+	root := http.NewServeMux()
+	rl := ratelimit.New(ctx, envFloat("MCP_RATE_LIMIT_RPS", 5), int(envFloat("MCP_RATE_LIMIT_BURST", 20)))
+	root.Handle("/mcp", rl.Middleware(mcpserver.Handler(pool)))
+	root.Handle("/", srv)
+
 	log.Printf("listening on %s", addr)
-	if err := http.ListenAndServe(addr, srv); err != nil {
+	if err := http.ListenAndServe(addr, root); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func envFloat(name string, fallback float64) float64 {
+	v, err := strconv.ParseFloat(os.Getenv(name), 64)
+	if err != nil || v <= 0 {
+		return fallback
+	}
+	return v
 }
