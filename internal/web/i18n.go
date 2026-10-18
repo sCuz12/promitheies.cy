@@ -157,8 +157,8 @@ var strings_ = map[string]map[Lang]string{
 	"home.h1":      {LangEL: "Οι δημόσιες συμβάσεις της Κύπρου, σε ένα σημείο", LangEN: "Cyprus public procurement, in one place"},
 	"home.sub":     {LangEL: "Κάθε διαγωνισμός, ανάθεση και ανάδοχος που δημοσιοποιεί το κράτος. τεκμηριωμένα και δωρεάν.", LangEN: "Every tender, award and contractor the state discloses. searchable, sourced, and free."},
 	"home.telegram_cta": {
-		LangEL: "Λάβετε alerts στο Telegram",
-		LangEN: "Get alerts on Telegram",
+		LangEL: "Μην χάσετε διαγωνισμό: alerts στο Telegram",
+		LangEN: "Don't miss a tender: get Telegram alerts",
 	},
 	"newsletter.kicker": {
 		LangEL: "Δωρεάν εβδομαδιαία ενημέρωση",
