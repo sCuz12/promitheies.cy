@@ -1,0 +1,42 @@
+{{define "title"}}{{if .IsEL}}Υποστήριξη{{else}}Support{{end}}{{end}}
+{{define "content"}}
+<div class="legal">
+{{if .IsEL}}
+<p class="breadcrumb">Βοήθεια / Υποστήριξη</p>
+<h1>Υποστήριξη Symvaseis.cy</h1>
+<p>Για βοήθεια με τον ιστότοπο ή τον MCP server του Symvaseis.cy, στείλτε email στο <a href="mailto:georgehadjisavvas12@gmail.com">georgehadjisavvas12@gmail.com</a>.</p>
+
+<h2>Πριν επικοινωνήσετε</h2>
+<p>Οι οδηγίες σύνδεσης, τα διαθέσιμα εργαλεία και παραδείγματα ερωτήσεων βρίσκονται στη <a href="/docs/mcp">σελίδα τεκμηρίωσης MCP</a>.</p>
+
+<h2>Τι να συμπεριλάβετε</h2>
+<ul>
+  <li>Την εφαρμογή AI που χρησιμοποιείτε, όπως ChatGPT, Claude ή Cursor.</li>
+  <li>Μια σύντομη περιγραφή του προβλήματος και τα βήματα που το προκάλεσαν.</li>
+  <li>Το ακριβές μήνυμα σφάλματος, χωρίς κωδικούς πρόσβασης ή άλλα μυστικά.</li>
+  <li>Για διόρθωση δεδομένων, σύνδεσμο ή αναγνωριστικό του σχετικού διαγωνισμού, αναθέτουσας αρχής ή αναδόχου.</li>
+</ul>
+
+<h2>Απόρρητο</h2>
+<p>Μην στέλνετε κωδικούς πρόσβασης, API keys ή ευαίσθητα προσωπικά δεδομένα. Για πληροφορίες σχετικά με την επεξεργασία δεδομένων, δείτε την <a href="/privacy">Πολιτική Απορρήτου</a>.</p>
+{{else}}
+<p class="breadcrumb">Help / Support</p>
+<h1>Symvaseis.cy Support</h1>
+<p>For help with the Symvaseis.cy website or MCP server, email <a href="mailto:georgehadjisavvas12@gmail.com">georgehadjisavvas12@gmail.com</a>.</p>
+
+<h2>Before contacting support</h2>
+<p>Connection instructions, available tools, and example prompts are available on the <a href="/docs/mcp">MCP documentation page</a>.</p>
+
+<h2>What to include</h2>
+<ul>
+  <li>The AI application you are using, such as ChatGPT, Claude, or Cursor.</li>
+  <li>A short description of the problem and the steps that produced it.</li>
+  <li>The exact error message, with passwords and other secrets removed.</li>
+  <li>For a data correction, the link or identifier for the relevant tender, authority, or contractor.</li>
+</ul>
+
+<h2>Privacy</h2>
+<p>Do not send passwords, API keys, or sensitive personal data. For information about data processing, read the <a href="/privacy">Privacy Policy</a>.</p>
+{{end}}
+</div>
+{{end}}

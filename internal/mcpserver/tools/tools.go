@@ -43,5 +43,12 @@ func notFound(err error, what, id string) error {
 // readOnly returns the annotations shared by every tool: they only read data.
 // The title is required for the Claude connectors directory listing.
 func readOnly(title string) *mcp.ToolAnnotations {
-	return &mcp.ToolAnnotations{Title: title, ReadOnlyHint: true}
+	openWorld := true
+	destructive := false
+	return &mcp.ToolAnnotations{
+		Title:           title,
+		ReadOnlyHint:    true,
+		OpenWorldHint:   &openWorld,
+		DestructiveHint: &destructive,
+	}
 }

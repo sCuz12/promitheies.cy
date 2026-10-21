@@ -1,0 +1,96 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "symvaseis-cy",
+  "version": "1.0.0",
+  "description": "Search and explore Cyprus public tenders, awards, contracting authorities, and contractors.",
+  "author": {
+    "name": "George Hadjisavvas",
+    "url": "https://symvaseis-cy.fly.dev"
+  },
+  "homepage": "https://symvaseis-cy.fly.dev/docs/mcp",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Symvaseis.cy",
+        "shortDescription": "Cyprus public procurement",
+        "longDescription": "Search and explore public procurement information from Cyprus. Symvaseis.cy helps users find current and historical tenders, inspect tender details, compare contracting authorities, and explore contractor award profiles. The service is read-only, requires no account, and returns links and structured information from the Symvaseis.cy procurement dataset.",
+        "developerName": "George Hadjisavvas",
+        "category": "Data & Analytics",
+        "defaultPrompt": [
+          "Find currently open IT tenders in Cyprus.",
+          "Show the largest contracting authorities by awarded value.",
+          "Which contractors have won the most public contract value?"
+        ],
+        "websiteURL": "https://symvaseis-cy.fly.dev/docs/mcp",
+        "supportURL": "https://symvaseis-cy.fly.dev/support",
+        "privacyPolicyURL": "https://symvaseis-cy.fly.dev/privacy",
+        "termsOfServiceURL": "https://symvaseis-cy.fly.dev/terms",
+        "logo": "./assets/logo.png",
+        "composerIcon": "./assets/logo.png"
+      },
+      "review": {
+        "prompts": [
+          "Find currently open IT tenders in Cyprus.",
+          "Find recent construction tenders and summarize their deadlines.",
+          "Show the ten largest contracting authorities by awarded value.",
+          "Which contractors have won the most public contract value?"
+        ],
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Find active procurement opportunities in a specific CPV division.",
+              "prompt": "Find currently open IT services tenders in Cyprus.",
+              "tools_triggered": "list_open_tenders",
+              "expected_behavior": "Call list_open_tenders with cpv_division set to 72. Return only tenders reported by the tool, identify them as currently open, and include useful fields such as title, authority, deadline, and source link when present."
+            },
+            {
+              "description": "Search historical and current procurement records using a sector filter.",
+              "prompt": "Find recent construction tenders in Cyprus.",
+              "tools_triggered": "search_tenders",
+              "expected_behavior": "Call search_tenders with cpv_division set to 45. Summarize the returned tenders without inventing results, and distinguish status or deadline information when supplied by the tool."
+            },
+            {
+              "description": "Rank contracting authorities using the dataset's awarded-value ordering.",
+              "prompt": "Show the ten largest contracting authorities by total awarded contract value.",
+              "tools_triggered": "list_authorities",
+              "expected_behavior": "Call list_authorities with limit set to 10. Present no more than ten returned authorities in their tool-provided order and include awarded totals when available."
+            },
+            {
+              "description": "Inspect the spending profile of an authority selected from the ranked authority list.",
+              "prompt": "Identify the largest contracting authority, then show its spending profile and top contractors.",
+              "tools_triggered": "list_authorities, get_authority",
+              "expected_behavior": "Call list_authorities to identify the top returned authority, then call get_authority with that authority's exact slug. Summarize totals, CPV sectors, top contractors, and recent awards only from the returned profile."
+            },
+            {
+              "description": "Inspect the award profile of a contractor selected from the ranked contractor list.",
+              "prompt": "Identify the contractor with the highest total awarded value, then summarize its recent awards and awarding authorities.",
+              "tools_triggered": "list_contractors, get_contractor",
+              "expected_behavior": "Call list_contractors to identify the top returned contractor, then call get_contractor with that contractor's exact slug. Summarize its total won, awarding authorities, and recent awards using only the returned data."
+            }
+          ],
+          "negative": [
+            {
+              "description": "The plugin can find tenders but cannot submit bids or make purchases; it should explain that limitation without invoking a procurement tool.",
+              "prompt": "Submit a bid for the best open construction tender on my behalf."
+            },
+            {
+              "description": "The plugin provides procurement data, not legal advice; it should recommend appropriate professional guidance without invoking a tool.",
+              "prompt": "Give me a legally binding opinion on whether my company is eligible for every Cyprus government tender."
+            },
+            {
+              "description": "An unrelated weather request is outside the plugin's capabilities and should not trigger any Symvaseis.cy tool.",
+              "prompt": "What will the weather be in Nicosia tomorrow?"
+            }
+          ]
+        },
+        "commerce": false
+      },
+      "publication": {
+        "countries": [
+          "CY"
+        ],
+        "release_notes": "Initial public release of the Symvaseis.cy plugin with read-only access to Cyprus tenders, tender details, contracting authorities, and contractor award profiles."
+      }
+    }
+  }
+}

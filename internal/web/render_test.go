@@ -62,6 +62,8 @@ func fakePages() map[string]any {
 			}},
 		},
 		"privacy": nil,
+		"support": nil,
+		"terms":   nil,
 		"mcp_docs": mcpDocsData{
 			URL: "https://example.com/mcp", Tools: mcpToolDocs,
 			Examples: []string{"mcp.example.1", "mcp.example.2"},
@@ -73,6 +75,32 @@ func fakePages() map[string]any {
 				CPVDivision: &cpvDiv, EstimatedVal: &val, Status: "open", PublishedAt: &date,
 			}},
 		},
+	}
+}
+
+func TestSupportAndTermsRenderRequiredContent(t *testing.T) {
+	templates, err := loadTemplates("../../templates")
+	if err != nil {
+		t.Fatalf("loadTemplates: %v", err)
+	}
+
+	tests := map[string][]string{
+		"support": {"Symvaseis.cy Support", "georgehadjisavvas12@gmail.com", `href="/docs/mcp"`, `href="/privacy"`},
+		"terms":   {"Terms of Use", "Informational use", "Acceptable use", "Republic of Cyprus", "georgehadjisavvas12@gmail.com"},
+	}
+	for page, required := range tests {
+		t.Run(page, func(t *testing.T) {
+			var buf bytes.Buffer
+			r := httptest.NewRequest("GET", "/"+page+"?lang=en", nil)
+			if err := templates[page].ExecuteTemplate(&buf, "layout", newPage(LangEN, r, nil)); err != nil {
+				t.Fatalf("execute %s: %v", page, err)
+			}
+			for _, want := range required {
+				if !strings.Contains(buf.String(), want) {
+					t.Errorf("%s output missing %q", page, want)
+				}
+			}
+		})
 	}
 }
 

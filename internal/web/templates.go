@@ -60,7 +60,7 @@ func groupThousands(s string) string {
 }
 
 func loadTemplates(dir string) (map[string]*template.Template, error) {
-	pages := []string{"home", "authorities", "authority", "contractors", "contractor", "tender", "open_tenders", "search", "mcp_docs", "privacy"}
+	pages := []string{"home", "authorities", "authority", "contractors", "contractor", "tender", "open_tenders", "search", "mcp_docs", "privacy", "support", "terms"}
 	templates := make(map[string]*template.Template, len(pages))
 
 	for _, page := range pages {
