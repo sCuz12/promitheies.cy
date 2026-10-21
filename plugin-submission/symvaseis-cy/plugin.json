@@ -1,6 +1,6 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "Symvaseis.CY",
+  "name": "symvaseis.cy",
   "version": "1.0.0",
   "description": "Search and explore Cyprus public tenders, awards, contracting authorities, and contractors.",
   "author": {
