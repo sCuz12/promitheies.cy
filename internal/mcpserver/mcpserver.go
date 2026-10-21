@@ -27,5 +27,11 @@ func Handler(pool *pgxpool.Pool) http.Handler {
 	})
 	tools.Register(s, pool)
 
-	return mcp.NewStreamableHTTPHandler(func(*http.Request) *mcp.Server { return s }, nil)
+	return mcp.NewStreamableHTTPHandler(
+		func(*http.Request) *mcp.Server { return s },
+		&mcp.StreamableHTTPOptions{
+			Stateless:    true,
+			JSONResponse: true,
+		},
+	)
 }
