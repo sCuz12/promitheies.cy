@@ -1,13 +1,13 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "symvaseis.cy",
+  "name": "symvaseis-cy",
   "version": "1.0.0",
   "description": "Search and explore Cyprus public tenders, awards, contracting authorities, and contractors.",
   "author": {
     "name": "George Hadjisavvas",
-    "url": "https://symvaseis-cy.fly.dev"
+    "url": "https://www.symvaseis.info/"
   },
-  "homepage": "https://symvaseis-cy.fly.dev/docs/mcp",
+  "homepage": "https://www.symvaseis.info/docs/mcp",
   "extensions": {
     "com.openai": {
       "interface": {
@@ -21,10 +21,10 @@
           "Show the largest contracting authorities by awarded value.",
           "Which contractors have won the most public contract value?"
         ],
-        "websiteURL": "https://symvaseis-cy.fly.dev/docs/mcp",
-        "supportURL": "https://symvaseis-cy.fly.dev/support",
-        "privacyPolicyURL": "https://symvaseis-cy.fly.dev/privacy",
-        "termsOfServiceURL": "https://symvaseis-cy.fly.dev/terms",
+        "websiteURL": "https://www.symvaseis.info/docs/mcp",
+        "supportURL": "https://www.symvaseis.info/support",
+        "privacyPolicyURL": "https://www.symvaseis.info/privacy",
+        "termsOfServiceURL": "https://www.symvaseis.info/terms",
         "logo": "./assets/logo.png",
         "composerIcon": "./assets/logo.png"
       },
