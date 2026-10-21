@@ -29,6 +29,7 @@
         "composerIcon": "./assets/logo.png"
       },
       "review": {
+        "demo_recording_url": "https://www.loom.com/share/1de7b206c54b408ea10d29303ddf01db",
         "prompts": [
           "Find currently open IT tenders in Cyprus.",
           "Find recent construction tenders and summarize their deadlines.",
