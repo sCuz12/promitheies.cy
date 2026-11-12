@@ -3,6 +3,7 @@ package ted
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/georgehadjisavvas/promitheies-cy/internal/alerts"
 	"github.com/georgehadjisavvas/promitheies-cy/internal/cpv"
@@ -121,4 +122,17 @@ func firstNonEmpty(values ...string) string {
 		}
 	}
 	return ""
+}
+
+// QuerySince narrows CyprusQuery to notices published within the last
+// lookbackDays days (inclusive). The search API returns oldest-first and
+// ignores sort parameters, so without a date filter every run pages through
+// the entire history just to reach the newest notices. lookbackDays <= 0
+// returns the unfiltered query (full re-scan / backfill).
+func QuerySince(now time.Time, lookbackDays int) string {
+	if lookbackDays <= 0 {
+		return CyprusQuery
+	}
+	since := now.AddDate(0, 0, -lookbackDays)
+	return CyprusQuery + " AND publication-date>=" + since.Format("20060102")
 }

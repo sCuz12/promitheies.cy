@@ -44,6 +44,10 @@ func main() {
 	telegramClient := newTelegramClientFromEnv()
 	telegramMaxMessages := envInt("TELEGRAM_MAX_NEW_TENDER_MESSAGES", 20)
 	publicBaseURL := os.Getenv("PUBLIC_BASE_URL")
+	// Rolling window: the API returns oldest-first, so an unfiltered query
+	// pages through all history. TED_LOOKBACK_DAYS=0 forces a full re-scan.
+	query := ted.QuerySince(time.Now(), envInt("TED_LOOKBACK_DAYS", 14))
+	log.Printf("ted query: %s", query)
 
 	runID, err := startIngestRun(ctx, pool, ted.Source)
 	if err != nil {
@@ -54,7 +58,7 @@ func main() {
 	var newTenders []alerts.Tender
 	page := 1
 	for {
-		resp, err := client.Search(ctx, ted.CyprusQuery, ted.Fields, page, ted.MaxPageLimit)
+		resp, err := client.Search(ctx, query, ted.Fields, page, ted.MaxPageLimit)
 		if err != nil {
 			finishIngestRun(ctx, pool, runID, totalProcessed, totalInserted, "failed", err.Error())
 			log.Fatalf("search page %d: %v", page, err)
